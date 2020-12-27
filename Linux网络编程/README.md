@@ -695,3 +695,318 @@ int getnameinfo(const struct sockaddr* sockaddr, socklen_t addrlen, char* host, 
 #include <netdb.h>
 const char* gai_strerror(int error);
 ```
+
+### Linux 高性能服务器编程：高级 `I/O` 函数
+
+Linux提供了基础 `I/O` 函数，同时针对特定的使用情景，为了提高性能，也提供了很多高级 `I/O` 函数。这里主要讨论与网络编程的几个高级 `I/O` 函数。
+
+#### 1. 用于创建文件描述符的函数
+
+- **pipe函数（创建两个文件描述符 作为 单向管道 实现 进程间通信）**
+
+  ```C
+  //pipe()这个函数可用于创建一个单向读写管道, 实现进程间的通信。
+  // 参数文件描述符数组 fd[0] 读出 fd[1]写入 单向管道
+  // 成功返回0, 并将一对打开的文件描述符填入其参数指向的数组
+  // 失败返回-1 errno
+  #include <unistd.h>
+  int pipe(int fd[2]);
+  /*
+                         pipe创建的管道
+                   -------------------------
+         读取端 <-  fd[0]               fd[1] <- 写入端
+                   -------------------------
+
+  1. 文件描述符属性：        
+     a. fd[0]、fd[1] 文件描述符默认情况下均为阻塞，即如下：
+                   -------------------------
+       read阻塞 <- 若fd[0]空        若fd[1]满 <- write阻塞
+                   -------------------------
+     b. fd[0]、fd[1] 文件描述符行为修改为阻塞，见后续
+
+  2. 文件描述符的进程引用数为0时的状况
+     a. fd[1] 写端进程引用数为0，即无任何进程写，fd[0]读端返回值为0，即读取到文件结束标记符。
+                   -------------------------
+      read操作返回0 fd[0]             fd[1]=0 
+                   -------------------------
+
+     b. fd[0] 读端进程引用计数为0，即无任何进程读，fd[1]写端write操作失败，并引发SIGPIPE信号。
+                   -------------------------
+                   fd[0]=0               fd[1] write操作失败，引发SIGPIPE信号
+                   -------------------------
+  */
+  ```
+
+- **socketpair函数（创建两个文件描述符 作为 双向管道 实现 进程间通信）**
+  
+  ```C
+  //弥补上面pipe只能创建单向管道的缺陷，可以创建一个双向管道。
+  // domain 只能为协议PF_UNIX(书上是AF_UNIX)，因为创建的是本地管道
+  // 成功返回0 失败返回-1并设置error
+  #include <sys/types.h>
+  #include <sys/socket.h>
+  int socketpair(int domain, int type, int protocol, int fd[2]);
+  ```
+
+- **dup函数 / dup2函数（复制一个现有文件描述符）** **<font color=red>分析待完善</font>**
+
+  ```C
+  #include <unistd.h>
+  // oldfd 待复制的文件描述符
+  // 返回新创建的文件描述符，返回的newfd文件描述符总是取系统当前可用的最小整数值，同时newfd与oldfd指向同一个文件、管道或网络连接
+  int dup(int oldfd);
+  // 可以用newfd来制定新的文件描述符, 如果newfd已经被打开则先关闭
+  // 如果newfd==oldfd 则不关闭newfd直接返回
+  int dup2(int oldfd, int newfd);
+
+  /*
+  重点: 使用dup和dup2创建的文件描述符并不继承原文件描述符的属性。
+
+  使用场景举例：
+        1. 将标准输入重定向到一个文件
+        2. 将标准输出重定向到一个网络连接。
+           int main()
+           {
+               int filefd = open("/home/lsmg/1.txt", O_WRONLY);
+               close(STDOUT_FILENO); //行为分析见下
+               dup(filefd);          //行为分析见下
+               printf("123\n");
+               exit(0);
+           }
+
+                操作     |       文件描述符
+        原始状态
+           send、recv... -> any>1 = filefd(filefd通往网络连接)
+                printf   ->   1   = STDOUT_FILENO(STDOUT_FILENO通往屏幕)
+
+        执行close(STDOUT_FILENO); 
+           send、recv... -> any>1 = filefd(filefd通往网络连接)
+                printf   ->   1   = x(x通往“无路可去”)；
+
+        执行dup(filefd);
+           send、recv... -> any>1 = filefd(filefd通往网络连接)
+                printf   ->   1   = newfd(newfd通往filefd的网络连接)
+  */
+  ```
+
+#### 2. 用于读写数据的函数
+
+- **stat文件结构体**
+
+  ```C
+  //在网络通信的过程中，一定会涉及到文件。
+  //文件结构体stat可用于标识一个文件，在该结构体中存在
+  //着文件的描述性信息，它就是文件的身份证。
+  #include <sys/stat.h>
+  struct stat
+  {
+      dev_t       st_dev;     /* ID of device containing file -文件所在设备的ID*/
+      ino_t       st_ino;     /* inode number -inode节点号*/
+      mode_t      st_mode;    /* protection -保护模式*/
+      nlink_t     st_nlink;   /* number of hard links -链向此文件的连接数(硬连接)*/
+      uid_t       st_uid;     /* user ID of owner -user id*/
+      gid_t       st_gid;     /* group ID of owner - group id*/
+      dev_t       st_rdev;    /* device ID (if special file) -设备号，针对设备文件*/
+      off_t       st_size;    /* total size, in bytes -文件大小，字节为单位*/
+      blksize_t   st_blksize; /* blocksize for filesystem I/O -系统块的大小*/
+      blkcnt_t    st_blocks;  /* number of blocks allocated -文件所占块数*/
+      time_t      st_atime;   /* time of last access -最近存取时间*/
+      time_t      st_mtime;   /* time of last modification -最近修改时间*/
+      time_t      st_ctime;   /* time of last status change - */
+  };
+  ```
+
+  ```C
+  // 文件身份证生成函数 或者 称为获取文件信息函数
+  // open()函数用于打开一个文件
+  // file_name 指定打开文件
+  // flag 文件编辑权限
+  //   - O_RDONLY只读模式
+  //   - O_WRONLY只写模式
+  //   - O_RDWR读写模式
+  int open(file_name, flag);
+  //fstat()函数由文件描述符取得文件状态
+  // filedes 需要调用open生成文件描述符，它是一个已存在的文件描述符！
+  // buf 目标文件信息存储区
+  int fstat(int filedes, struct stat *buf);
+
+  //stat()和lstat()函数获取文件状态
+  // path 区别于fstat的filedes，path是一个文件名
+  // buf 目标文件信息存储区
+  // stat和lstat区别：当路径指向为符号链接的时候，lstat为符号链接本身的信息，stat为符号链接指向文件的信息
+  int stat(const char *path, struct stat *buf);
+  int lstat(const char *path, struct stat *buf);
+
+  /*
+  ln -s source dist  建立软连接, 类似快捷方式, 也叫符号链接
+  ln source dist  建立硬链接, 同一个文件使用多个不同的别名, 指向同一个文件数据块, 只要硬链接不被完全删除就可以正常访问
+  文件数据块 - 文件的真正数据是一个文件数据块, 打开的`文件`指向这个数据块, 就是说
+  `文件`本身就类似快捷方式, 指向文件存在的区域.
+  */
+  ```
+
+- **readv / writev 函数（用户内存空间-socket，非零拷贝）**
+
+  ```C
+  //readv()：将数据从**文件描述符**读到**用户空间中分散的内存块**中，即分散读
+  //writev()：将**用户空间中多块分散的内存**数据一并写入**文件描述符**中，即集中写
+  #include <sys/uio.h>
+  // count 为 vector的长度, 即为有多少块内存
+  // 成功时返回写入\读取的长度 失败返回-1
+  ssize_t readv(int fd, const struct iovec* vector, int count);
+  ssize_t writev(int fd, const struct iovec* vector, int count);
+
+  struct iovec {
+    void* iov_base /* 内存起始地址*/
+    size_t iov_len /* 这块内存长度*/
+  }
+  /*示意如下：
+              服务端                   |     客户端
+    [内存块1 内存块2...] <-> socket<----|----->客户端 
+  */   
+  ```
+
+- **sendfile函数（socket-socket，零拷贝）**
+
+  ```C
+  //sendfile()函数在两个文件描述符之间直接传递数据，
+  //从而避免内核缓存区与用户缓冲区之间的数据拷贝，效率很高，称为零拷贝。
+  #include <sys/sendfile.h>
+  // out_fd 待写入内容的文件描述符 必须是一个socket
+  // in_fd 待读出内容的文件描述符 必须支持类似mmap函数，不能是socket和管道
+  // offset 指定从读入文件流的哪里开始读, 如果为NULL 则使用读入文件流默认的位置
+  // count 指定传输的字节数
+  // 成功返回传输的字节数 失败返回-1并设置error
+  ssize_t sendfile(int out_fd, int in_fd, off_t* offset, size_t count);
+  ```
+
+- **mmap和munmap函数**
+  
+  ```C
+  //mmap()创建一块进程通讯共享的内存(可以将文件映射入其中)
+  //munmap()释放这块内存
+  #include <sys/mman.h>
+  // start 内存起始位置, 如果为NULL则系统分配一个地址
+  // length为长度
+  // port参数 PROT_READ(可读) PROT_WRITE(可写) PROT_EXEC(可执行), PROT_NONE(不可访问)
+  // flag参数 内存被修改后的行为
+  // - MAP_SHARED 进程间共享内存, 对内存的修改反映到映射文件中
+  // - MAP_PRIVATE 为调用进程私有, 对该内存段的修改不会反映到文件中
+  // - MAP_ANONUMOUS 不是从文件映射而来, 内容被初始化为0, 最后两个参数被忽略
+  // fd 被映射文件的文件描述符
+  // offset 设置从文件的何处开始映射
+  // 成功返回区域指针, 失败返回 -1
+  void* mmap(void* start, size_t length, int port, int flags, int fd, off_t offset);
+  // 成功返回0 失败返回-1
+  int munmap(void* start, size_t length);
+  ```
+
+- **splice函数（管道-socket，零拷贝）**
+
+  ```C
+  //用于在两个文件名描述符之间移动数据, 零拷贝操作
+  #include <fcntl.h>
+  // fd_in 为文件描述符, 如果为管道文件描述符则 off_in必须为NULL, 否则为读取开始偏移位置
+  // len为指定移动的数据长度
+  // off_in 表示从输入流的何处开始读数据
+  // flags参数控制数据如何移动.
+  //  - SPLICE_F_NONBLOCK 非阻塞splice操作, 但实际效果还会受文件描述符自身的阻塞状态的影响
+  //  - SPLICE_F_MORE 给内核一个提示, 后续的splice调用将读取更多的数据
+  // 成功返回移动字节的数量 失败返回-1并设置error
+  //    - EBADF 参数所指文件描述符有错
+  //    - EINVAL 目标文件系统不支持splice|目标文件以追加方式打开|两个都不是管道文件描述符|offset参数被用于不支持随机访问的设备
+  //    - ENOMEM 内存不够
+  //    - ESPIPE fd_in|fd_out为管道文件描述符，而off_in|off_out不为NULL
+  ssize_t splice(int fd_in, loff_t* off_in, int fd_out, loff_t* off_out, size_t len, unsigned int flags);
+
+  // 使用splice函数  实现回射服务器
+  int main(int argc, char* argv[])
+  {
+    if (argc <= 2)
+    {
+        printf("the parmerters is wrong\n");
+        exit(errno);
+    }
+    char *ip = argv[1];
+
+    int port = atoi(argv[2]);
+    printf("the port is %d the ip is %s\n", port, ip);
+
+    int sockfd = socket(PF_INET, SOCK_STREAM, 0);
+    assert(sockfd >= 0);
+
+    struct sockaddr_in address{};
+    address.sin_family = AF_INET;
+    address.sin_port = htons(port);
+    inet_pton(AF_INET, ip, &address.sin_addr);
+
+    int ret = bind(sockfd, (sockaddr*)&address, sizeof(address));
+    assert(ret != -1);
+
+    ret = listen(sockfd, 5);
+
+    int clientfd{};
+    sockaddr_in client_address{};
+    socklen_t client_addrlen = sizeof(client_address);
+
+    clientfd = accept(sockfd, (sockaddr*)&client_address, &client_addrlen);
+    if (clientfd < 0)
+    {
+        printf("accept error\n");
+    }
+    else
+    {
+        printf("a new connection from %s:%d success\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
+        int fds[2];
+        pipe(fds);
+        ret = splice(clientfd, nullptr, fds[1], nullptr, 32768, SPLICE_F_MORE);
+        assert(ret != -1);
+
+        ret = splice(fds[0], nullptr, clientfd, nullptr, 32768, SPLICE_F_MORE);
+        assert(ret != -1);
+
+        close(clientfd);
+    }
+    close(sockfd);
+    exit(0);
+  }
+  ```
+
+- **tee函数（管道-管道，零拷贝）**
+
+  ```C
+  //tee()函数在两个管道文件描述符之间复制数据，也是零拷贝
+  //不消耗数据，源文件描述符上的数据仍然可被后用。
+  #include <fcntl.h>
+  // fd_in 为源管道文件描述符
+  // fd_out 为目标管道文件描述符
+  // len 指定移动的数据长度
+  // flags 参数控制数据如何移动
+  //  - SPLICE_F_NONBLOCK 非阻塞splice操作, 但实际效果还会受文件描述符自身的阻塞状态的影响
+  //  - SPLICE_F_MORE 给内核一个提示, 后续的splice调用将读取更多的数据
+  // 成功返回两个文件描述符之间复制的字节数 失败返回-1并设置error
+  ssize_t tee(int fd_in, int fd_out, size_t len, unsigned int flags);
+  ```
+
+#### 3. 控制 I/O 行为和属性的函数
+
+- **fcntl函数**
+  ```C
+  //提供了对文件描述符的各种控制操作
+  #include <fcntl.h>
+  // fd 被操作的文件描述符
+  // cmd 指定执行何种类型的操作
+  //     - 常用操作使用时再补充
+  // ··· 根据操作类型不同，可能需要的第三个可选参数arg
+  int fcntl(int fd, int cmd, ···);
+
+  ```
+
+### Linux高性能服务器编程：Linux服务器程序规范
+
+- **Linux服务器程序一般以后台进程形式运行**。后台进程又称守护进程（daemon）。它没有控制终端，因而也不会意外接收到用户输入。守护进程的父进程通常是init进程（PID为1的进程）。
+- **Linux服务器程序通常有一套日志系统**，它至少能输出日志到文件，有的高级服务器还能输出日志到专门的UDP服务器。大部分后台进程都在/var/log目录下拥有自己的日志目录。
+- **Linux服务器程序一般以某个专门的非root身份运行**。比如mysqld、htpd、syslogd等后台进程，分别拥有自己的运行账户mysql、apache和syslog。
+- **Linux服务器程序通常是可配置的**。服务器程序通常能处理很多命令行选项，如果一次运行的选项太多，则可以用配置文件来管理。绝大多数服务器程序都有配置文件，并存放在/etc目录下。比如第4章讨论的squid服务器的配置文件是/etc/squid3/squid.conf。
+- **Linux服务器进程通常会在启动的时候生成一个PID文件并存入/var/run目录中**，以记录该后台进程的PID。比如syslogd的PID文件是/var/run/syslogd.pid。
+- **Linux服务器程序通常需要考虑系统资源和限制**，以预测自身能承受多大负荷，比如进程可用文件描述符总数和内存总量等。
