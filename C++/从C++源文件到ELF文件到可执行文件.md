@@ -147,7 +147,6 @@ int main()
 
 >参考
 >
->- [ELF文件详解—初步认识](https://blog.csdn.net/daide2012/article/details/73065204)
 >- [Linux下C语言生成可执行文件的过程](https://www.cnblogs.com/jack-zou/p/9068247.html)
 
 #### 1. 翻译层次
@@ -227,7 +226,7 @@ int main()
   - 将可执行目标文件中的指令和数据复制到内存中。
   - 把主程序的参数（如果存在）复制到栈顶。
   - 初始化机器寄存器，将栈指针指向第一个空位置。
-  - 跳转到启动例程，它将参数复制到参数寄存器并且调用程序的main函数。当main函数返回时，启动例程通过系统调用exit终止程序。
+  - 跳转到启动例程，它将参数复制到参数寄存器并且调用程序的main函数。当 `main` 函数返回时，启动例程通过系统调用 `exit` 终止程序。
 
 在Linux下上面四步可以直接用下面的命令完成：
 
@@ -239,16 +238,16 @@ gcc main.c -o main
 
 ### 三、 编译过程
 
-这里我们的编译过程包括：预编译阶段、编译阶段、汇编阶段。所以编译结束后的文件是一个**可重定位目标文件**，linux下是*.o文件，windows中是*.obj文件。经过后续的链接器作用才会得到一个**可执行目标文件**。
+这里我们的编译过程包括：预编译阶段、编译阶段、汇编阶段。所以编译结束后的文件是一个**可重定位目标文件**，linux下是 `*.o` 文件，windows中是 `*.obj` 文件。经过后续的链接器作用才会得到一个**可执行目标文件**。
 
 #### 1. 编译命令
 
 如上所述，整个编译将分为四个步骤：
 
-- 首先编写源文件main.c/main.cpp；
-- 编写好代码以后进行预编译成main.i文件，预编译过程中去掉注释、进行宏替换、增加行号信息等；
-- 然后将main.i文件经过语法分析、代码优化和汇总符号等步骤后，编译形成main.S的汇编文件，里面存放的都是汇编代码；
-- 最后一个编译步骤是进行汇编，从main.S变成二进制可重定位目标文件main.o。
+- 首先编写源文件 `main.c/main.cpp`；
+- 编写好代码以后进行预编译成 `main.i` 文件，预编译过程中去掉注释、进行宏替换、增加行号信息等；
+- 然后将 `main.i` 文件经过语法分析、代码优化和汇总符号等步骤后，编译形成 `main.S` 的汇编文件，里面存放的都是汇编代码；
+- 最后一个编译步骤是进行汇编，从 `main.S` 变成二进制可重定位目标文件 `main.o`。
 
 以上四个步骤对应的在linux下的命令为：
 
@@ -260,21 +259,29 @@ gcc -c main.S            #汇编，生成main.o文件
 
 #### 2. 二进制目标文件的结构和布局
 
-参考：[使用readelf和objdump解析目标文件。](https://www.jianshu.com/p/863b279c941e)
+>参考：
+>
+>- [ELF文件详解—初步认识](https://blog.csdn.net/daide2012/article/details/73065204)
+>- [Linux[ELF]: ELF文件结构简单梳理](https://www.jianshu.com/p/dd5aec5826da)
+>- [使用readelf和objdump解析目标文件。](https://www.jianshu.com/p/863b279c941e)
+>- [objdump命令](https://man.linuxde.net/objdump)
+>- [readelf命令](https://man.linuxde.net/readelf)
+>- [readelf 和 objdump 例子详解及区别](https://blog.csdn.net/lqy971966/article/details/106905237?utm_medium=distribute.pc_relevant.none-task-blog-baidujs_title-2&spm=1001.2101.3001.4242)
 
-首先给出一个二进制目标文件的总体布局，如果是汇编器输出的可重定位目标文件，则可能没有program header，编译器输出的可执行目标文件program header和section header均有：
+首先给出一个二进制目标文件的总体布局，如果是汇编器输出的可重定位目标文件，则可能没有 `program header`（里面有多个元素，每个元素是一个结构体，这个结构体描述了一个具体节的相关属性），编译器输出的可执行目标文件`program header` 和 `section header`（里面有多个元素，每个元素是一个结构体，这个结构体描述了一个具体节的相关属性） 均有：
 
 ![二进制可重定位目标文件](./从C++源文件到ELF文件到可执行文件fig/ELF文件简介.png)
 
-前文中提到从链接器的角度来看ELF文件（下图中的链接视图），另外一个角度就是从加载器的角度看ELF文件（下图中的执行视图）。**注意是先有这些东西，链接器和加载器看的时候才有可以看的东西**。汇编器生成了可重定位文件，这个文件里面已经有节区的存在，链接器看的时候就是链接视图，然后链接器处理完成生成program header，加载器看的时候就是执行视图了。
+上图中的节类型和段类型网上资料有，这里就不详细列出来了。
+
+前文中提到从链接器的角度来看ELF文件（下图中的链接视图），另外一个角度就是从加载器的角度看ELF文件（下图中的执行视图）。**注意是先有这些东西，链接器和加载器看的时候才有可以看的东西**。汇编器生成了可重定位文件，这个文件里面已经有节区的存在，链接器看的时候就是链接视图，然后链接器处理完成生成 `program header`，加载器看的时候就是执行视图了。
 
 ![二进制可重定位目标文件](./从C++源文件到ELF文件到可执行文件fig/ELF文件简介3.png)
 
 >注：那篇博客中称为段segment是不正确的，ELF文件只有一个，它会被链接器和加载器顺序处理：
 >
->- 链接器在处理它的时候通过section header table中的每一个节描述结构体来认识这个ELF文件。section header table由汇编器生成。链接器处理操作之一就是将读写等属性相同的section合并为segment，这种合并的体现是生成对应的program header table，而不是抹掉section并建立segment，所以此时section header table和program header table并存。
->- 加载器在处理它的时候通过program header table中的每一个段描述结构体来认识这个ELF文件。program header table由链接器生成，此时section header table虽然存在但是不会用上。
-
+>- 链接器在处理它的时候通过 `section header table` 中的每一个节描述结构体来认识这个ELF文件。`section header table` 由汇编器生成。链接器处理操作之一就是将读写等属性相同的 `section` 合并为 `segment` ，这种合并的体现是生成对应的 `program header table`，而不是抹掉 `section` 并建立 `segment`，所以此时 `section header table` 和 `program header table` 并存。
+>- 加载器在处理它的时候通过 `program header table` 中的每一个段描述结构体来认识这个ELF文件。`program header table` 由链接器生成，此时 `section header table` 虽然存在但是不会用上。
 
 #### 3. 使用Linux命令查看可重定位文件内容
 
@@ -287,7 +294,7 @@ objdump 显示目标文件的信息，提供反汇编功能，不能显示调试
 
 ##### 1) **查看ELF header**
 
-首先查看可重定位目标文件main.o的ELF header，在Linux下输入如下命令：
+首先查看可重定位目标文件 `main.o` 的 `ELF header`，在Linux下输入如下命令：
 
 ```shell
 # readelf用来显示一个或多个elf格式的目标文件的信息
@@ -381,7 +388,7 @@ Key to Flags:
   
 `.text` 代码节的大小为0x19，起始偏移为0x40，所以 `.data` 节的起始偏移应该为0x19+0x40=0x59，但是为了字节对齐，所以。`.data` 节的起始地址为0x5c，也即图中 `offset` 字段所示，后面的节以此类推。
   
-之后的 `.bss` 节会出现两个问题，一个是 `.bss` 节的大小应该为4*6=24字节（对于未初始化或者初始化值为0的数据存放在 `.bss` 节，而且不占目标文件的空间，即gdata2、gdata3、gdata5、gdata6、e和f），但是实际上却是20字节；另一个问题就是可以看到 `.comment` 节的偏移(offset)也为0x68，这说明 `.bss` 节在目标文件中是不占大小的，即 `.comment` 和 `.bss` 的偏移相同。对于这两个问题，简单说一下。第一个问题，涉及到C语言中的强符号和弱符号概念；第二个问题我们可以这样理解，因为 `.bss` 节中存的是初始化为0或者未初始化的数据，而实际未初始化的数据其默认值也为0，这样我们就没必要存它们的初始值，相当于有一个默认值0。
+之后的 `.bss` 节会出现两个问题，一个是 `.bss` 节的大小应该为4*6=24字节（对于未初始化或者初始化值为0的数据存放在 `.bss` 节，而且不占目标文件的空间，即 `gdata2、gdata3、gdata5、gdata6、e和f`），但是实际上却是20字节；另一个问题就是可以看到 `.comment` 节的偏移(offset)也为0x68，这说明 `.bss` 节在目标文件中是不占大小的，即 `.comment` 和 `.bss` 的偏移相同。对于这两个问题，简单说一下。第一个问题，涉及到C语言中的强符号和弱符号概念；第二个问题我们可以这样理解，因为 `.bss` 节中存的是初始化为0或者未初始化的数据，而实际未初始化的数据其默认值也为0，这样我们就没必要存它们的初始值，相当于有一个默认值0。
 
 当然也可以使用如下的命令：
 
@@ -484,13 +491,13 @@ moocos-> readelf -l main.o
 There are no program headers in this file.
 ```
 
-显示没有program header，因为由汇编器生成得到的可重定位目标文件中只有节区，而没有段，段是在链接器处理之后才会生成的。
+显示没有 `program header`，因为由汇编器生成得到的可重定位目标文件中只有节区，而没有段，段是在链接器处理之后才会生成的。
 
-objdump没有查看segment header的命令选项，但是你可以使用 `objdump -x` 来查看所有的头部信息
+`objdump` 没有查看 `segment header` 的命令选项，但是你可以使用 `objdump -x` 来查看所有的头部信息
 
 ##### 4) **符号表信息**
 
-以上就是可重定位目标文件的组成，下面再介绍一下上面提到的**符号表**如下图，第一列是符号的地址，由于编译的时候不分配地址，所以放的是零地址或者偏移量；第二列是符号的作用域(g代表global，l代表local)，前面讨论了用static修饰过的符号均是local的（不明白的搜一下static关键字的作用），如下图中gdata4/gdata5/gdata6等；第三列表示符号位于哪个节，在这里也能看到gdata1、gdata4和d都存放在.data节中，初始化为0或未初始化的gdata2/gdata5/gdata6等都存放在.bss节：
+以上就是可重定位目标文件的组成，下面再介绍一下上面提到的**符号表**如下图，第一列是符号的地址，由于编译的时候不分配地址，所以放的是零地址或者偏移量；第二列是符号的作用域( `g` 代表 `global`，`l` 代表 `local`)，前面讨论了用 `static` 修饰过的符号均是 `local` 的（不明白的搜一下 `static` 关键字的作用），如下图中 `gdata4/gdata5/gdata6` 等；第三列表示符号位于哪个节，在这里也能看到 `gdata1、gdata4` 和 `d` 都存放在 `.data` 节中，初始化为0或未初始化的 `gdata2/gdata5/gdata6` 等都存放在 `.bss` 节：
 
 ```shell
 # -t 
@@ -547,7 +554,7 @@ Symbol table '.symtab' contains 18 entries:
     17: 0000000000000000    25 FUNC    GLOBAL DEFAULT    1 main
 ```
 
-这里特别说一下gdata3，按上面的分析来说它应该是存放在.bss节，但是我们可以看到它是*COM*，原因在于它是一个弱符号，在编译时无法确定有没有强符号会覆盖它。
+这里特别说一下 `gdata3`，按上面的分析来说它应该是存放在 `.bss` 节，但是我们可以看到它是*COM*，原因在于它是一个弱符号，在编译时无法确定有没有强符号会覆盖它。
 
 ##### 5) 以上三个header可以使用以下命令一并输出
 
@@ -581,7 +588,7 @@ objdump -x main.o
 
 ##### 2) **合并符号表**
 
-链接阶段只处理所有obj文件的global符号，local符号不作任何处理。
+链接阶段只处理所有 `obj` 文件的 `global` 符号，`local` 符号不作任何处理。
 
 ##### 3) **符号解析**
 
@@ -746,25 +753,100 @@ SYMBOL TABLE:
 
 ```
 
-从上图中我们可以看到gdata1等变量的地址不再是0，而是0x0601038，正确回填了绝对地址。
+从上图中我们可以看到 `gdata1` 等变量的地址不再是0，而是0x0601038，正确回填了绝对地址。
 
 ### 五、 可执行程序
 
 链接完成以后形成了可执行文件，下面来解析可执行文件是如何执行起来的。同样，首先给出可执行文件的总体布局，然后再来深入解析。
 ![可执行文件布局](./从C++源文件到ELF文件到可执行文件fig/可执行文件布局.png)
 
-首先看一下可执行文件的头部，如下图，里面记录了函数的入口点地址为0x08048094(后面会解释这个值的来由)，还有就是size of this headers，程序头部占52个字节，然后还有三个program headers，每个program headers占32字节，共占3*32=96字节，所以程序头部+program heades=52+96=0x94，而从虚拟地址空间布局可知.text段正好是从0x08048000开始的，所以可执行程序的入口点就是0x08048000+0x94=0x08048094：
+#### 1. 可执行文件程序入口点
 
-![readelf_h_main](./从C++源文件到ELF文件到可执行文件fig/readelf_h_main.png)
+首先看一下可执行文件的头部，如下图，里面记录的程序入口地址为 `0x400400`。看下它怎么得到的：
 
- 然后看看这三个program headers里面的内容，第一个load项的属性是可读可执行，其实存放的就是代码段；第二个load项的属性是可读可写，其实存放的就是数据段。这两个load项的意义在于它指示了哪些段会被加载到同一个页面中：
+- 第一步：找到 `.text` 在整个ELF文件中的偏移量
+  `.text` 是程序的一个节，所以我们可以在 `section header table` 找到关于 `.text` 的描述，我们使用 `readelf -S main` 可以看见 `.text` 的偏移是400，
+- 第二步：我们找到ELF文件的第一个字节加载到虚拟内存的何处
+  由于加载器在加载ELF文件的时候，是以执行视图来看待ELF文件的，此时它看到的是段，我们可以通过 `program header table` 来找到ELF文件的第一个字节被加载到虚拟内存的何处。使用 `readelf -l main`，观察第一个 `LOAD` 段，它的起始虚拟地址是0x400000，所以ELF的第一个字节被加载到了0x400000处。
+  
+结合上面两点，`.text` 的虚拟地址就是0x400400，`.text` 是我们程序开始执行的起始点，所以头文件中的入口点地址是0x400400.
 
-![readelf_-l_main](./从C++源文件到ELF文件到可执行文件fig/readelf_-l_main.png)
+再观察 `.text` 中的内容，我们使用 `objdump -d main` 可以看到0x400400处是 `_start` 函数，也就是该可执行文件的启动函数，而我们实际编写的程序 `main` 的起始地址是 `0x4004ed`。
 
-可以看到这两个load项的对齐方式是页面对齐（32位linux操作系统页面大小为4K）。
+至于博客里面讲的：程序的入口地址 = ELF第一字节的虚拟地址+ `program header table` 的大小。这种说法是错误的。可以通过 `readelf -S main` 观察节区的分布情况，在 `program header table` 和 `.text` 之间还有许多其它的节区。
 
-当双击一个可执行程序时，首先解析其文件头部ELF header获取entry point address程序入口点地址，然后按照两个load项的指示将相应的段通过mmap()函数映射到虚拟页面中（虚拟页面存在于虚拟地址空间中），最后再通过多级页表映射将虚拟页面映射到物理页面中。
+```shell
+moocos-> readelf -h main
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF64
+  Data:                              2's complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           Advanced Micro Devices X86-64
+  Version:                           0x1
+  Entry point address:               0x400400
+  Start of program headers:          64 (bytes into file)
+  Start of section headers:          4464 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           56 (bytes)
+  Number of program headers:         9
+  Size of section headers:           64 (bytes)
+  Number of section headers:         30
+  Section header string table index: 27
 
-说完编译链接，最后说明如何将VP映射到PP就打工告成了。
+```
 
-分为三步，1.首先是创建虚拟地址到物理内存的映射（创建内核地址映射结构体），创建页目录和页表；2. 再就是加载代码段和数据段；3.把可执行文件的入口地址写到CPU的PC寄存器中。
+#### 2. LOAD段分析
+
+再来看看 `program headers` 中的两个LOAD段描述符，第一个load项的属性是可读可执行，其实存放的就是代码段；第二个load项的属性是可读可写，其实存放的就是数据段。这两个load项的意义在于它指示了哪些段会被加载到同一个页面中，可以看到这两个load项的对齐方式是页面对齐（32位linux操作系统页面大小为4K）。
+
+```shell
+moocos-> readelf -l main
+
+Elf file type is EXEC (Executable file)
+Entry point 0x400400
+There are 9 program headers, starting at offset 64
+
+Program Headers:
+  Type           Offset             VirtAddr           PhysAddr
+                 FileSiz            MemSiz              Flags  Align
+  PHDR           0x0000000000000040 0x0000000000400040 0x0000000000400040
+                 0x00000000000001f8 0x00000000000001f8  R E    8
+  INTERP         0x0000000000000238 0x0000000000400238 0x0000000000400238
+                 0x000000000000001c 0x000000000000001c  R      1
+      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+  LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
+                 0x00000000000006bc 0x00000000000006bc  R E    200000
+  LOAD           0x0000000000000e10 0x0000000000600e10 0x0000000000600e10
+                 0x0000000000000234 0x0000000000000250  RW     200000
+  DYNAMIC        0x0000000000000e28 0x0000000000600e28 0x0000000000600e28
+                 0x00000000000001d0 0x00000000000001d0  RW     8
+  NOTE           0x0000000000000254 0x0000000000400254 0x0000000000400254
+                 0x0000000000000044 0x0000000000000044  R      4
+  GNU_EH_FRAME   0x0000000000000594 0x0000000000400594 0x0000000000400594
+                 0x0000000000000034 0x0000000000000034  R      4
+  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
+                 0x0000000000000000 0x0000000000000000  RW     10
+  GNU_RELRO      0x0000000000000e10 0x0000000000600e10 0x0000000000600e10
+                 0x00000000000001f0 0x00000000000001f0  R      1
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     
+   01     .interp 
+   02     .interp .note.ABI-tag .note.gnu.build-id .gnu.hash .dynsym .dynstr .gnu.version .gnu.version_r .rela.dyn .rela.plt .init .plt .text .fini .rodata .eh_frame_hdr .eh_frame 
+   03     .init_array .fini_array .jcr .dynamic .got .got.plt .data .bss 
+   04     .dynamic 
+   05     .note.ABI-tag .note.gnu.build-id 
+   06     .eh_frame_hdr 
+   07     
+   08     .init_array .fini_array .jcr .dynamic .got 
+```
+
+综上，当双击一个可执行程序时，首先解析其文件头部 `ELF header` 获取 `entry point address` 程序入口点地址，然后按照两个 `load` 项的指示将相应的段通过 `mmap()` 函数映射到虚拟页面中（虚拟页面存在于虚拟地址空间中），最后再通过多级页表映射将虚拟页面（VP）映射到物理页面（PP）中。该映射分为三步，1.首先是创建虚拟地址到物理内存的映射（创建内核地址映射结构体），创建页目录和页表；2. 再就是加载代码段和数据段；3.把可执行文件的入口地址写到CPU的PC寄存器中。
+
+具体的加载方式以及虚拟页物理页映射参考操作系统。
