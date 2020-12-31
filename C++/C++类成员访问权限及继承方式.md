@@ -2,7 +2,8 @@
 ### 2、C++基础：虚继承
 >[虚继承和虚基类详解](2020-12-9.mdhttp://c.biancheng.net/view/2280.html)  
 >虚继承和虚基类的出现是为了解决这样一个问题：在菱形继承中，在派生类中访问继承来的成员变量时产生命名冲突。
-```
+
+```C++
 //间接基类A
 class A{
 protected:
@@ -41,7 +42,8 @@ int main(){
 这段代码实现了一种菱形继承，Derived Class D中试图直接访问成员变量 m_a，结果发生了错误，因为Derived Class B 和Derived Class C 中都有成员变量 m_a（从 Base Class A 继承而来），编译器不知道选用哪一个，所以产生了歧义。为了消除歧义，我们可以在 m_a 的前面指明它具体来自哪个类：```void seta(int a){ B::m_a = a; }```，这样表示使用 B 类的 m_a。当然也可以使用 C 类的：  ```void seta(int a){ C::m_a = a; }```。  
 
 为了解决多继承中的命名冲突和冗余数据，C++提出了虚拟继承，使得在派生类中只保留一份间接基类的成员。上面的例子改为如下：
-```
+
+```C++
 //间接基类A
 class A{
 protected:
@@ -83,7 +85,7 @@ int main(){
 我们可以发现虚继承一个特征：**必须在虚派生的真实需求出现之前就已经完成虚派生的操作**。例如上面的例子中，只有Derived Class D出现时才出现了虚派生的需求，为了满足这个需求，Derived Class B 和Derived Class C才都必须完成虚派生的操作。换个角度讲：**虚派生只影响从指定了虚基类（A）的派生类（B、C）中进一步派生出来的类（D），它不影响虚基类（A）的派生类本身（B、C）。所以我们将位于继承体系中间层次的基类（例如本例中的B、C）将其继承声明为虚继承一般不会带来影响。**
 >**虚继承的实例**：C++标准库中的iostream类就是一个虚继承的实际应用，是典型的菱形继承。此时istream类和ostream类必须采取虚继承，否则将导致在iostream类中有两份base_ios类的成员。
 
-```
+```C++
 //iostream的间接基类base_ios
 class base_ios{};
 
@@ -106,7 +108,6 @@ class iostream: public istream, public ostream{};
 ### 3、C++基础：C++类成员访问权限及继承方式
 
 >主要考虑的是：1. 在定义了一个该类的**实体对象**后，通过该实体对象可以访问类中哪些成员；2. 在该类基础上**派生**了一个类后，派生类中可以访问类中哪些成员。
-
 >[C++类成员访问权限及继承方式](https://blog.csdn.net/CYH00_/article/details/110675807)  
 >[C++类成员的访问权限以及类的封装](http://c.biancheng.net/view/2217.html)  
 >C++通过 public、protected、private 三个关键字来控制成员变量和成员函数的访问权限，它们分别表示公有的、受保护的、私有的，被称为成员访问限定符。  
@@ -146,5 +147,3 @@ class iostream: public istream, public ostream{};
 ### C++基础：C++对象模型
 
 >[C++对象模型](https://www.cnblogs.com/skynet/p/3343726.html)
-
----
