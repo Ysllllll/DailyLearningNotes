@@ -42,7 +42,7 @@
 > tcp 端口的状态可以使用 netstat 命令查看
 
 - tcp 状态转移总图  
-  ![tcp状态图](tcp状态图.png "tcp状态图")
+  ![tcp状态图](./fig/tcp状态图.png "tcp状态图")
 - time_wait 状态  
   time_wait状态在经过2MSL时间后才进入close状态
   可靠地终止tcp连接：防止报文段7丢失后无法接收到服务端重新发送的报文段6  
@@ -100,7 +100,7 @@
 
 > 简介：实例总图
 
-![通过代理服务器访问Internet上的Web服务器实例](服务器访问实例.png)
+![通过代理服务器访问Internet上的Web服务器实例](./fig/服务器访问实例.png)
 Kongming20为客户端，在该客户端与Internet上的服务器的访问之间，为了观察客户端与服务器之间交互内容的方便，我们添加一个中间层：代理服务器（实例中是ernest-laptop），当然这里并不是说不观察就不需要这个代理服务器，实际上它还有其它用途，例如缓存服务器返回的客户端所请求的目标资源，这样用户下次访问同一资源时速度将很快。
 
 有了这个代理服务器之后，我们所有的客户端对Internet上的服务器的请求都会首先被发送到该代理服务器，然后该代理服务器对这个请求进行简单的修改，然后再发送给Internet上的服务器。反过来同样，Internet上的服务器对该请求的回答报文首先发送给代理服务器，然后代理服务器再返还给客户端。  
@@ -440,10 +440,10 @@ struct sockaddr_storage
   - socket 3为**服务端监听socket**。
   - 有5个客户端与服务器建立了连接，socket 4、5、6、7、8均为**服务端连接socket**
 
-  ![accepttest运行结果](accepttest运行结果.png)
-  ![cmd中观察accepttest程序运行中接受的4个客户端连接状态](cmd中观察accepttest程序运行中接受的4个客户端连接状态.png)
+  ![accepttest运行结果](./fig/accepttest运行结果.png)
+  ![cmd中观察accepttest程序运行中接受的4个客户端连接状态](./fig/cmd中观察accepttest程序运行中接受的4个客户端连接状态.png)
 
-  ![cmd中观察accepttest程序运行完毕后所接受的5个客户端连接状态](cmd中观察accepttest程序运行完毕后所接受的5个客户端连接状态.png)
+  ![cmd中观察accepttest程序运行完毕后所接受的5个客户端连接状态](./fig/cmd中观察accepttest程序运行完毕后所接受的5个客户端连接状态.png)
 
 #### 3. 数据读写API
 
@@ -561,7 +561,7 @@ int setsockopt(int sockfd, int level, int option_name, void* option_value, sockl
 
 - **socket属性选项**
 
-  ![socket属性选项](socket属性选项.png)
+  ![socket属性选项](./fig/socket属性选项.png)
 
 - **socket重要属性选项分析**
   - **SO_REUSEADDR　重用本地地址**
