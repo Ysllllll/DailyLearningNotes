@@ -11,104 +11,56 @@
 
 #define BUF_SIZE 1024
 
-// 将收到的信息分发，提供连接分组，总连接数和发送连接标号
-void distributeMessage(int *conns, int connAmount, int nowConn, char *clientIp, char *msg)
-{
-    char final_msg[100];
-    memset(final_msg, '\0', strlen(final_msg));
-
-    // from *.*.*.* : msg\n
-    strcat(final_msg, "from ");
-    strcat(final_msg, clientIp);
-    strcat(final_msg, ": ");
-    strcat(final_msg, msg);
-    strcat(final_msg, "\n");
-
-    for (int i = 0; i <= connAmount && i != nowConn; i++)
-    {
-        send(conns[i], final_msg, BUF_SIZE - 1, 0);
-    }
-}
-
 int main(int argc, char *argv[])
 {
-
+    // 1.转换传入服务器参数
     if (argc <= 2)
     {
         printf("error, arrgument amount error");
         return 1;
     }
-
     char *ip = argv[1];
     int port = atoi(argv[2]);
 
+    // 2.服务器参数指定
     struct sockaddr_in address;
     memset(&address, 0, sizeof(address));
     inet_pton(AF_INET, ip, &address.sin_addr);
     address.sin_port = htons(port);
     address.sin_family = AF_INET;
 
+    // 3.分配服务器资源
     int sock = socket(PF_INET, SOCK_STREAM, 0);
     assert(sock >= 0);
-
-    int resue = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &resue, sizeof(resue)); //可重用本地地址
-
     int ret = bind(sock, (struct sockaddr *)&address, sizeof(address));
-    if (ret == -1)
-    {
-        printf("error code is: %d, error is: %s\n", errno, strerror(errno));
-        return 1;
-    }
-
+    assert(ret != -1);
     ret = listen(sock, 5);
     assert(ret != -1);
 
-    int maxClient = 2;
-    int clientAmount = 0;
-    struct sockaddr_in clients[maxClient];
+    // 4.连接客户端并获取客户端地址
+    struct sockaddr_in client;
+    socklen_t client_addrlength = sizeof(client);
+    int conn = accept(sock, (struct sockaddr *)&client, &client_addrlength);
+    assert(conn != -1);
+    char newMsgIp[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &client.sin_addr, newMsgIp, INET_ADDRSTRLEN);
 
-    int acceptSocket[maxClient];
-    int acceptConn[maxClient];
+    // 5.分配接收缓存和发送缓存
+    char recv_buffer[BUF_SIZE];
+    char send_buffer[100];
 
-    while (clientAmount != maxClient)
+    // 6.服务器接收客户端的信息，并返回给客户端特定的信息
+    while (1)
     {
+        memset(recv_buffer, '\0', BUF_SIZE);
+        recv(conn, recv_buffer, BUF_SIZE - 1, MSG_DONTWAIT);
 
-        struct sockaddr_in *client = &clients[clientAmount];
+        if (recv_buffer[0] != '\0')
+            printf("recv msg from client %s: %s\n", newMsgIp, recv_buffer);
 
-        socklen_t client_addrlength = sizeof(client);
-        int conn = accept(sock, (struct sockaddr *)client, &client_addrlength);
-        if (conn != -1)
-        {
-            //char newSocketIp[INET_ADDRSTRLEN];
-            //inet_ntop(AF_INET, &(client->sin_addr), newSocketIp, INET_ADDRSTRLEN);
-            //printf("新连接建立 - %d, ip地址为 - %s\n", sock, newSocketIp);
-
-            acceptSocket[clientAmount] = sock;
-            acceptConn[clientAmount] = conn;
-            clientAmount++;
-        }
-    }
-
-    for (int i = 0;; i++)
-    {
-        char recvBuff[BUF_SIZE];
-        memset(recvBuff, '\0', BUF_SIZE);
-        recv(acceptConn[i % maxClient], recvBuff, BUF_SIZE - 1, MSG_DONTWAIT);
-
-        if (recvBuff[0] != '\0')
-        {
-
-            char newMsgIp[INET_ADDRSTRLEN];
-            inet_ntop(AF_INET, &(clients[i % maxClient].sin_addr), newMsgIp, INET_ADDRSTRLEN);
-            printf("recv msg from %s: %s\n", newMsgIp, recvBuff);
-
-            distributeMessage(acceptConn, clientAmount - 1, i % maxClient - 1, newMsgIp, recvBuff);
-        }
-        if (!strcmp(recvBuff, "exit"))
-        {
-            return 1;
-        }
+        memset(send_buffer, '\0', strlen(send_buffer));
+        strcat(send_buffer, "server info");
+        send(conn, send_buffer, BUF_SIZE - 1, 0);
     }
     return 0;
 }
