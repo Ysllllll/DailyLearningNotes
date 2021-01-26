@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/f/MYCODE/GitWorkspace/学习日记/muduo/muduo/base/CurrentThread.h
+muduo/base/Types.h
+/mnt/f/MYCODE/GitWorkspace/学习日记/muduo/muduo/base/muduo/base/Types.h
+
+/mnt/f/MYCODE/GitWorkspace/学习日记/muduo/muduo/base/Exception.h
+muduo/base/Types.h
+/mnt/f/MYCODE/GitWorkspace/学习日记/muduo/muduo/base/muduo/base/Types.h
+exception
+-
+
+/mnt/f/MYCODE/GitWorkspace/学习日记/muduo/muduo/base/Types.h
+stdint.h
+-
+string.h
+-
+string
+-
+assert.h
+-
+
+/mnt/f/MYCODE/GitWorkspace/学习日记/muduo/muduo/base/tests/Exception_test.cc
+muduo/base/CurrentThread.h
+/mnt/f/MYCODE/GitWorkspace/学习日记/muduo/muduo/base/tests/muduo/base/CurrentThread.h
+muduo/base/Exception.h
+/mnt/f/MYCODE/GitWorkspace/学习日记/muduo/muduo/base/tests/muduo/base/Exception.h
+functional
+-
+vector
+-
+stdio.h
+-
+

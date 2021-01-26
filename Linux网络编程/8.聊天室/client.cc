@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
         if (fds[0].revents & POLLIN)
         {
             //使用splice将用户输入的数据直接写到sockfd上（零拷贝）
-            ret = splice(0, nullptr, pipefd[1], NULL, 32768, SPLICE_F_MORE | SPLICE_F_MOVE);
-            ret = splice(pipefd[0], nullptr, sockfd, NULL, 32768, SPLICE_F_MORE | SPLICE_F_MOVE);
+            ret = splice(0, NULL, pipefd[1], NULL, 32768, SPLICE_F_MORE | SPLICE_F_MOVE);
+            ret = splice(pipefd[0], NULL, sockfd, NULL, 32768, SPLICE_F_MORE | SPLICE_F_MOVE);
         }
     }
 
