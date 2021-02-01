@@ -46,7 +46,7 @@ public:
 
 public:
     time_t expire;
-    void (*cb_func)(client_data);
+    void (*cb_func)(client_data *);
     client_data *user;
     int index;
 };
@@ -60,7 +60,8 @@ public:
 
     void add_timer(heap_timer *timer);
     void del_timer(heap_timer *timer);
-    heap_timer* pop_timer();
+    heap_timer *top_timer();
+    void pop_timer();
     void tick();
 
 private:
