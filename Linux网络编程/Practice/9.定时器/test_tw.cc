@@ -1,4 +1,4 @@
-#include "tw_timer.h"
+#include "timer_tw.h"
 
 #define FD_LIMIT 65535
 #define MAX_EVENT_NUMBER 1024
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
                 else
                 {
                     timer_wheel.del_timer(timer);
-                    tw_timer *timer = timer_wheel.add_timer(connection_time_out);
+                    timer = timer_wheel.add_timer(connection_time_out);
                     timer->user_data = &users[sockfd];
                     timer->cb_func = cb_func;
                     users[sockfd].timer = timer;
