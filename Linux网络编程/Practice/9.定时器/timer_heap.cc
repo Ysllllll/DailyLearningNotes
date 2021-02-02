@@ -86,8 +86,8 @@ void time_heap::tick()
     }
     if (valid_size >= 1)
     {
-        alarm(array[1]->expire - cur);
-        printf("alarm:%ld\n", array[1]->expire - cur);
+        //alarm(array[1]->expire - cur);
+        //printf("alarm:%ld\n", array[1]->expire - cur);
     }
 
     alarm(1);
