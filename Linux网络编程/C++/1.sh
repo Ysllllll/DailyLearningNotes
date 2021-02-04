@@ -1,4 +1,4 @@
 #! bash
 
-g++ complex.cc -o test
+g++ complex.cc -g -o test
 ./test

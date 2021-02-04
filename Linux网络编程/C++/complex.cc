@@ -45,7 +45,9 @@ ostream &operator<<(ostream &os, complex &rhs)
 
 int main()
 {
+    //complex tmp1(2.0, 3.0);
     complex tmp = complex(5.0, 4.0);
     cout << tmp << endl;
+
     return 0;
 }
