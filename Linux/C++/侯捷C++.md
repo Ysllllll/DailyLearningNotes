@@ -20,6 +20,7 @@
       - 可以构造堆对象：`classtype *tmp = classtype::create();`。`create()` 为类中 `static` 函数，函数主体 `{return new classtype;}`
   - 成员函数
     - `const` 成员函数：保证不会改变**对象的数据**，普通成员函数则会改变数据
+      - 当成员函数的 `const` 和 `non-const` 版本同时存在，`const object` 只会（只能）调用 `const` 版本，`non-const object` 只会（只能）调用 `non-const` 版本
     - `const` 参数
       - 传入 `pass`：保证在函数体内不会改变**该参数**
       - 传出 `return`：保证在函数体外不会改变**该参数**
@@ -38,6 +39,9 @@
   - 函数重载
     - 操作符重载 为成员函数：有 `this` 指针
     - 操作符重载 为非成员函数：无 `this` 指针
+    - 重载标志
+      - 函数名、参数列表、函数后缀、`const`是重载标志
+      - `static`，引用参数、返回类型不是重载标志
 
 - class with pointer member（String实现）
   - `big three`
@@ -54,6 +58,8 @@
   - 常量对象：只能调用**常量成员函数**
   - 非常量对象：可以调用常量成员函数，也可以调用非常量成员函数
   - 临时对象
+  - 如何禁止产生栈对象，而只能产生堆对象：构造函数私有化，成员函数分配堆对象并将该对象返回给用户
+  - 如何禁止产生堆对象，而只能产生栈对象：将 `operator new` 和 `operator delete` 私有化，用户将无法使用 `new`
 
 - `new` 与 `delete`
   - `new` 分解
@@ -80,14 +86,30 @@
     - 堆对象和栈对象的析构函数的调用存在区别，堆对象需要**主动调用**，如果不调用堆对象会一直存在。而栈对象会**自动调用**，因为**栈回滚**，会在离开这个作用域（程序**自动**移动栈顶指针）的时候清除这个作用域所占用内存的内容
   - `array new` 和 `array delete`
     - 若类含有指针数据成员，同时没有搭配使用，会造成内存泄露。这里的内存泄露在**第二级的 `new`**（第一级 `new` 为用户调用：`string *p = new string[3]`，第二级 `new` 为构造函数内部调用：`char *m_str = new char[strlen(str)+1]`;）
+  - 重载 `::operator new/delete，::operator new[]/delete[]`
+    - 影响范围：全局
+    - 重载理由：实现内存管理
+
+    ```C++
+    //注意返回值与参数
+    void* operator new(size_t size);
+    void* operator new[](size_t size);
+    void  operator delete(void* ptr);
+    void  operator delete[](void* ptr);
+    ```
+
+  - 重载 `member operator new/delete，member operator new[]/delete[]`
+    - 影响范围：分配该类对象
+    - 重载理由：实现内存池
+  - 重载 `new()、delete()`
 
 - 进一步补充
-  - static：仅仅表明可见域，不表明访问权限，或者你可以这样考虑，共享范围
-  - 模板
-    - 缺点：会造成代码膨胀
-    - 类模板：需要**显式指定模板参数**，`vector<int> a;`
-    - 函数模板：不需要显式指定模板参数，编译器会自动推导，`reverse(a.begin(), a.end());`
+  - static：仅仅表明可见域，不表明访问权限，也可以从共享的角度来看
   - `namespace`
+  - 自定义类型转换
+    - 将自定义类型通过 **转换函数`conversion function`** 转换为其它内置类型（`double、int、long...`）
+    - 将其它类型通过 **隐式/显式调用构造函数** 转换为自定义类型
+      - `explicit` 关键字修饰构造函数会将这一动作限定为 **仅显式调用**
 
 ## 面向对象编程
 
@@ -109,7 +131,7 @@
     - `non-virtual`：不希望 `derived class` 重新定义它
     - `virtual`：希望 `derived class` 重新定义它，且已经有默认定义
     - `pure virtual`：希望 `derived class` 一定要重新定义它，且没有默认定义
-  - 构造与析构顺序：
+  - 构造与析构顺序：由编译器来做
     - 构造由内而外
     - 析构由外而内
   - 设计模式：`Template method` （与虚函数搭配）
@@ -119,3 +141,98 @@
 - 委托 + 继承
   - 构造与析构顺序
   - 设计模式：`Observer、Composite、Prototype`
+
+## 泛型编程
+
+- pointer-like classes
+  - 操作符重载： `*` 和 `->`
+    - `*`：```T& operator*() const { return*px; }```
+    - `->`：```T* operator->() const {return px; }```，注意这里返回的是指针，因为`->`操作符可以一直作用下去
+  - 实例：智能指针、迭代器
+- function-like classes
+  
+  ```C++{.line-numbers}
+  class stringAppend
+  {
+  public:
+      explicit stringAppend(const string &str="") : ss(str) {}
+      void operator()(const string &str) const
+      {
+          cout << str << ' ' << ss << endl;
+      }
+  private:
+      const string ss;
+  };
+  stringAppend my("and world!"); //调用的是构造函数
+  my("hello");//调用的是operator()成员函数
+  stringAppend()("hello");//注意第一个括号是生成临时对象，第二括号才是函数调用。
+  stringAppend("world")("hello");//注意第一个括号是生成临时对象（这个临时对象有初值，会调用构造函数），第二括号才是函数调用。
+  ```
+
+- 模板
+  - 类模板：需要**显式指定模板参数**，`vector<int> a;`
+  - 函数模板：不需要显式指定模板参数，编译器会自动推导，`reverse(a.begin(), a.end());`
+  - 成员模板：多用于构造函数。将**构造函数**设计为一个成员模板，在定义一个对象的时候，用于初始化对象的初值的类型将绑定到这个成员模板的模板参数上：`pair<BaseType1, BaseType2> p2(pair<DerivedType1, DerivedType2>())`
+  - 缺点：会造成代码膨胀
+
+- 模板特化
+  - 全特化：泛化
+  - 偏特化：个数的偏
+  - 偏特化：范围的偏，仅针对指针
+  - 模板模板参数...
+
+## 对象模型（仅谈涉及虚函数的情况）
+
+- 继承
+  - 继承的数据成员：占用内存
+  - 继承的函数成员：继承的是调用权，而不能从内存的角度去考虑
+- 虚函数指针
+- 虚函数表
+- 静态绑定（非指针运算或传递）
+  - 汇编层面：`call xxx`
+  - 可能出现的问题：若给一个父类的形参传递一个子类的实参，子类实参将被切割
+- 动态绑定（指针运算或传递）
+  - 汇编层面：`(*(p->vptr)[n])(p)`
+  - 三大条件
+    - 指针
+    - 向上转型：即给一个父类的指针形参传递了一个子类的指针实参
+    - 调用虚函数
+  - 可能出现的问题：当derived class对象经由一个base class指针被删除，而该base class带着一个non-virtual析构函数，其结果未有定义
+
+## 琐碎
+
+- 数量不定的模板参数
+  
+  ```C++
+  template<typename T, typename... Type>
+  void print(const T& firstArg, const Type&... args);
+  ```
+
+- auto
+  - 编译器自动推导表达式类型
+  
+    ```C++
+    vector<int> vec;
+    auto ite1 = find(vec.begin(), vec.end(), target);//能够自动推导
+    auto ite2;
+    ite2 = find(vec.begin(), vec.end(), target);//不能自动推导
+    ```
+
+- ranged-base for
+
+  ```C++
+  for(int i : {2, 3, 4, 5, 6});
+  for(auto  elem : vec)//改变elem时，不会改变vec中的值
+  for(auto& elem : vec)//改变elem时，会改变vec中的值
+  ```
+
+- reference
+  - 必须初始化、不是重载标志（重载标志：函数名 + 参数列表 + 函数后缀）
+  - 本质
+    - 底层：指针
+    - 顶层：对象和其引用的大小相同、地址也相同，这是由编译器给出的假象
+  - 用途
+    - 不用于常量声明
+    - 用于参数类型和返回类型描述
+
+
