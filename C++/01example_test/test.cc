@@ -258,8 +258,8 @@ namespace test5 //结合类对象测试placement new
 
         JustTesting *pc3, *pc4;
         // fix placement new location
-        pc3 = new (buffer + sizeof(JustTesting)) //非优化版pc3 = new (buffer) JustTesting("Bad Idea", 6);
-            JustTesting("Better Idea", 6);
+        pc3 = new (buffer + sizeof(JustTesting))
+            JustTesting("Better Idea", 6); //非优化版pc3 = new (buffer) JustTesting("Bad Idea", 6);
         pc4 = new JustTesting("Heap2", 10);
 
         cout << "Memory contents:\n";
