@@ -6,212 +6,212 @@ using namespace std;
 
 namespace test1 //测试仿函数
 {
-	class stringAppend
-	{
-	public:
-		explicit stringAppend(const string &str = "") : ss(str) {}
+    class stringAppend
+    {
+    public:
+        explicit stringAppend(const string &str = "") : ss(str) {}
 
-		void operator()(const string &str) const
-		{
-			cout << str << ' ' << ss << endl;
-		}
+        void operator()(const string &str) const
+        {
+            cout << str << ' ' << ss << endl;
+        }
 
-	private:
-		const string ss;
-	};
+    private:
+        const string ss;
+    };
 
-	int main(void)
-	{
-		stringAppend my("and world!"); //调用构造函数
-		my("hello");				   //调用operator()
-		stringAppend()("Yes");		   //创建一个临时函数对象，然后进行函数调用
-		return 0;
-	}
+    int main(void)
+    {
+        stringAppend my("and world!"); //调用构造函数
+        my("hello");                   //调用operator()
+        stringAppend()("Yes");         //创建一个临时函数对象，然后进行函数调用
+        return 0;
+    }
 } // namespace test1
 
 namespace test2 //测试模板特化
 {
-	template <class key>
-	struct Hash
-	{
-	};
+    template <class key>
+    struct Hash
+    {
+    };
 
-	template <>
-	struct Hash<char>
-	{
-		size_t operator()(char x) const { return x; }
-	};
+    template <>
+    struct Hash<char>
+    {
+        size_t operator()(char x) const { return x; }
+    };
 
-	template <>
-	struct Hash<int>
-	{
-		size_t operator()(int x) const { return x; }
-	};
+    template <>
+    struct Hash<int>
+    {
+        size_t operator()(int x) const { return x; }
+    };
 
-	template <>
-	struct Hash<long>
-	{
-		size_t operator()(long x) const { return x; }
-	};
+    template <>
+    struct Hash<long>
+    {
+        size_t operator()(long x) const { return x; }
+    };
 
-	int main()
-	{
-		cout << hash<long>()(1000) << endl;
-		return 0;
-	}
+    int main()
+    {
+        cout << hash<long>()(1000) << endl;
+        return 0;
+    }
 } // namespace test2
 
 namespace test3 //测试继承
 {
-	class A
-	{
-	public:
-		A() : m_data1(0), m_data2(0) {}
-		virtual void vfunc1()
-		{
-			cout << "A::vfunc1()" << endl;
-		}
-		virtual void vfunc2()
-		{
-			cout << "A::vfunc2()" << endl;
-		}
-		void fun1()
-		{
-			cout << "A::func1()" << endl;
-		}
-		void fun2()
-		{
-			cout << "A::vfunc2()" << endl;
-		}
+    class A
+    {
+    public:
+        A() : m_data1(0), m_data2(0) {}
+        virtual void vfunc1()
+        {
+            cout << "A::vfunc1()" << endl;
+        }
+        virtual void vfunc2()
+        {
+            cout << "A::vfunc2()" << endl;
+        }
+        void fun1()
+        {
+            cout << "A::func1()" << endl;
+        }
+        void fun2()
+        {
+            cout << "A::vfunc2()" << endl;
+        }
 
-	private:
-		int m_data1, m_data2;
-	};
+    private:
+        int m_data1, m_data2;
+    };
 
-	class B : public A
-	{
-	public:
-		B() : m_data3(0) {}
-		virtual void vfunc1()
-		{
-			cout << "B::vfunc1()" << endl;
-		}
-		void fun2()
-		{
-			cout << "B::fun2()" << endl;
-		}
+    class B : public A
+    {
+    public:
+        B() : m_data3(0) {}
+        virtual void vfunc1()
+        {
+            cout << "B::vfunc1()" << endl;
+        }
+        void fun2()
+        {
+            cout << "B::fun2()" << endl;
+        }
 
-	private:
-		int m_data3;
-	};
+    private:
+        int m_data3;
+    };
 
-	class C : public B
-	{
-	public:
-		C() : m_data1(0), m_data4(0) {}
-		virtual void vfunc1()
-		{
-			cout << "C::vfunc1()" << endl;
-		}
-		void fun2()
-		{
-			cout << "C::fun2()" << endl;
-		}
+    class C : public B
+    {
+    public:
+        C() : m_data1(0), m_data4(0) {}
+        virtual void vfunc1()
+        {
+            cout << "C::vfunc1()" << endl;
+        }
+        void fun2()
+        {
+            cout << "C::fun2()" << endl;
+        }
 
-	private:
-		int m_data1, m_data4;
-	};
+    private:
+        int m_data1, m_data4;
+    };
 
-	void fun(A *p)
-	{
-		p->vfunc1();
-	}
+    void fun(A *p)
+    {
+        p->vfunc1();
+    }
 
-	int main()
-	{
-		A *pa = new A;
-		B *pb = new B;
-		C *pc = new C;
-		fun(pa);
-		fun(pb);
-		fun(pc);
+    int main()
+    {
+        A *pa = new A;
+        B *pb = new B;
+        C *pc = new C;
+        fun(pa);
+        fun(pb);
+        fun(pc);
 
-		B b;
-		A a = (A)b;
-		a.vfunc1();
+        B b;
+        A a = (A)b;
+        a.vfunc1();
 
-		A *pa1 = &b;
-		pa1->vfunc1();
+        A *pa1 = &b;
+        pa1->vfunc1();
 
-		A *pa2 = new B;
-		pa2->vfunc1();
-		A *pa3 = new C;
-		pa3->vfunc1();
+        A *pa2 = new B;
+        pa2->vfunc1();
+        A *pa3 = new C;
+        pa3->vfunc1();
 
-		return 0;
-	}
+        return 0;
+    }
 } // namespace test3
 
 #include <iostream>
-#include <new>	// for placement new
+#include <new>  // for placement new
 namespace test4 //结合数组测试placement new
 {
-	// newplace.cpp -- using placement new
+    // newplace.cpp -- using placement new
 
-	const int BUF = 512;
-	const int N = 5;
-	char buffer[BUF]; // chunk of memory
-	int main()
-	{
-		using namespace std;
+    const int BUF = 512;
+    const int N = 5;
+    char buffer[BUF]; // chunk of memory
+    int main()
+    {
+        using namespace std;
 
-		double *pd1, *pd2;
-		int i;
-		cout << "Calling new and placement new:\n";
-		pd1 = new double[N];		  // use heap
-		pd2 = new (buffer) double[N]; // use buffer array
-		for (i = 0; i < N; i++)
-			pd2[i] = pd1[i] = 1000 + 20.0 * i;
-		cout << "Memory addresses:\n"
-			 << "  heap: " << pd1						//常规new在堆上分配内存的首地址
-			 << "  static: " << (void *)buffer << endl; //布局new在buffer上分配的首地址
-		cout << "Memory contents:\n";
-		for (i = 0; i < N; i++)
-		{
-			cout << pd1[i] << " at " << &pd1[i] << "; ";
-			cout << pd2[i] << " at " << &pd2[i] << endl;
-		}
+        double *pd1, *pd2;
+        int i;
+        cout << "Calling new and placement new:\n";
+        pd1 = new double[N];          // use heap
+        pd2 = new (buffer) double[N]; // use buffer array
+        for (i = 0; i < N; i++)
+            pd2[i] = pd1[i] = 1000 + 20.0 * i;
+        cout << "Memory addresses:\n"
+             << "  heap: " << pd1                       //常规new在堆上分配内存的首地址
+             << "  static: " << (void *)buffer << endl; //布局new在buffer上分配的首地址
+        cout << "Memory contents:\n";
+        for (i = 0; i < N; i++)
+        {
+            cout << pd1[i] << " at " << &pd1[i] << "; ";
+            cout << pd2[i] << " at " << &pd2[i] << endl;
+        }
 
-		cout << "\nCalling new and placement new a second time:\n";
-		double *pd3, *pd4;
-		pd3 = new double[N];		  // find new address
-		pd4 = new (buffer) double[N]; // overwrite old data
-		for (i = 0; i < N; i++)
-			pd4[i] = pd3[i] = 1000 + 40.0 * i;
-		cout << "Memory contents:\n";
-		for (i = 0; i < N; i++)
-		{
-			cout << pd3[i] << " at " << &pd3[i] << "; ";
-			cout << pd4[i] << " at " << &pd4[i] << endl;
-		}
+        cout << "\nCalling new and placement new a second time:\n";
+        double *pd3, *pd4;
+        pd3 = new double[N];          // find new address
+        pd4 = new (buffer) double[N]; // overwrite old data
+        for (i = 0; i < N; i++)
+            pd4[i] = pd3[i] = 1000 + 40.0 * i;
+        cout << "Memory contents:\n";
+        for (i = 0; i < N; i++)
+        {
+            cout << pd3[i] << " at " << &pd3[i] << "; ";
+            cout << pd4[i] << " at " << &pd4[i] << endl;
+        }
 
-		cout << "\nCalling new and placement new a third time:\n";
-		delete[] pd1;
-		pd1 = new double[N];
-		pd2 = new (buffer + N * sizeof(double)) double[N];
-		for (i = 0; i < N; i++)
-			pd2[i] = pd1[i] = 1000 + 60.0 * i;
-		cout << "Memory contents:\n";
-		for (i = 0; i < N; i++)
-		{
-			cout << pd1[i] << " at " << &pd1[i] << "; ";
-			cout << pd2[i] << " at " << &pd2[i] << endl;
-		}
-		delete[] pd1;
-		delete[] pd3;
-		// cin.get();
-		return 0;
-	}
+        cout << "\nCalling new and placement new a third time:\n";
+        delete[] pd1;
+        pd1 = new double[N];
+        pd2 = new (buffer + N * sizeof(double)) double[N];
+        for (i = 0; i < N; i++)
+            pd2[i] = pd1[i] = 1000 + 60.0 * i;
+        cout << "Memory contents:\n";
+        for (i = 0; i < N; i++)
+        {
+            cout << pd1[i] << " at " << &pd1[i] << "; ";
+            cout << pd2[i] << " at " << &pd2[i] << endl;
+        }
+        delete[] pd1;
+        delete[] pd3;
+        // cin.get();
+        return 0;
+    }
 } // namespace test4
 
 #include <iostream>
@@ -220,63 +220,63 @@ namespace test4 //结合数组测试placement new
 using namespace std;
 namespace test5 //结合类对象测试placement new
 {
-	const int BUF = 512;
+    const int BUF = 512;
 
-	class JustTesting
-	{
-	private:
-		string words;
-		int number;
+    class JustTesting
+    {
+    private:
+        string words;
+        int number;
 
-	public:
-		JustTesting(const string &s = "Just Testing", int n = 0)
-		{
-			words = s;
-			number = n;
-			cout << words << " constructed\n";
-		}
-		~JustTesting() { cout << words << " destroyed\n"; }
-		void Show() const { cout << words << ", " << number << endl; }
-	};
-	int main()
-	{
-		char *buffer = new char[BUF]; // get a block of memory
+    public:
+        JustTesting(const string &s = "Just Testing", int n = 0)
+        {
+            words = s;
+            number = n;
+            cout << words << " constructed\n";
+        }
+        ~JustTesting() { cout << words << " destroyed\n"; }
+        void Show() const { cout << words << ", " << number << endl; }
+    };
+    int main()
+    {
+        char *buffer = new char[BUF]; // get a block of memory
 
-		JustTesting *pc1, *pc2;
+        JustTesting *pc1, *pc2;
 
-		pc1 = new (buffer) JustTesting;		// place object in buffer
-		pc2 = new JustTesting("Heap1", 20); // place object on heap
+        pc1 = new (buffer) JustTesting;     // place object in buffer
+        pc2 = new JustTesting("Heap1", 20); // place object on heap
 
-		cout << "Memory block addresses:\n"
-			 << "buffer: "
-			 << (void *)buffer << "    heap: " << pc2 << endl;
-		cout << "Memory contents:\n";
-		cout << pc1 << ": ";
-		pc1->Show();
-		cout << pc2 << ": ";
-		pc2->Show();
+        cout << "Memory block addresses:\n"
+             << "buffer: "
+             << (void *)buffer << "    heap: " << pc2 << endl;
+        cout << "Memory contents:\n";
+        cout << pc1 << ": ";
+        pc1->Show();
+        cout << pc2 << ": ";
+        pc2->Show();
 
-		JustTesting *pc3, *pc4;
-		// fix placement new location
-		pc3 = new (buffer + sizeof(JustTesting))
-			JustTesting("Better Idea", 6); //非优化版pc3 = new (buffer) JustTesting("Bad Idea", 6);
-		pc4 = new JustTesting("Heap2", 10);
+        JustTesting *pc3, *pc4;
+        // fix placement new location
+        pc3 = new (buffer + sizeof(JustTesting))
+            JustTesting("Better Idea", 6); //非优化版pc3 = new (buffer) JustTesting("Bad Idea", 6);
+        pc4 = new JustTesting("Heap2", 10);
 
-		cout << "Memory contents:\n";
-		cout << pc3 << ": ";
-		pc3->Show();
-		cout << pc4 << ": ";
-		pc4->Show();
+        cout << "Memory contents:\n";
+        cout << pc3 << ": ";
+        pc3->Show();
+        cout << pc4 << ": ";
+        pc4->Show();
 
-		delete pc2; // free Heap1
-		delete pc4; // free Heap2
-		// explicitly destroy placement new objects
-		pc3->~JustTesting(); // destroy object pointed to by pc3   非优化版无此行
-		pc1->~JustTesting(); // destroy object pointed to by pc1   非优化版无此行
-		delete[] buffer;	 // free buffer
-		// std::cin.get();
-		return 0;
-	}
+        delete pc2; // free Heap1
+        delete pc4; // free Heap2
+        // explicitly destroy placement new objects
+        pc3->~JustTesting(); // destroy object pointed to by pc3   非优化版无此行
+        pc1->~JustTesting(); // destroy object pointed to by pc1   非优化版无此行
+        delete[] buffer;     // free buffer
+        // std::cin.get();
+        return 0;
+    }
 } // namespace test5
 
 #include <string.h>
@@ -288,137 +288,137 @@ namespace test6
 #define malloc_addr heap
 #define malloc_size HEAPSIZE
 
-	static unsigned char has_initialized;
-	static intptr_t managed_memory_start;
-	static intptr_t managed_memory_end;
-	static intptr_t managed_memory_size;
-	unsigned char heap[HEAPSIZE];
+    static unsigned char has_initialized;
+    static intptr_t managed_memory_start;
+    static intptr_t managed_memory_end;
+    static intptr_t managed_memory_size;
+    unsigned char heap[HEAPSIZE];
 
-	typedef struct
-	{
-		unsigned char is_available;
-		unsigned int prior_blocksize;
-		unsigned int current_blocksize;
-	} mem_control_block;
+    typedef struct
+    {
+        unsigned char is_available;
+        unsigned int prior_blocksize;
+        unsigned int current_blocksize;
+    } mem_control_block;
 
-	void malloc_init()
-	{
-		mem_control_block *mcb = NULL;
-		//the type of managed_memory_start must be long, not unsigned int.
-		//cast from "unsigned char*" to "unsigned int" lost precision
-		//              8 bytes            4 bytes
-		managed_memory_start = (intptr_t)malloc_addr;
-		managed_memory_size = malloc_size;
-		managed_memory_end = managed_memory_start + managed_memory_size;
+    void malloc_init()
+    {
+        mem_control_block *mcb = NULL;
+        //the type of managed_memory_start must be long, not unsigned int.
+        //cast from "unsigned char*" to "unsigned int" lost precision
+        //              8 bytes            4 bytes
+        managed_memory_start = (intptr_t)malloc_addr;
+        managed_memory_size = malloc_size;
+        managed_memory_end = managed_memory_start + managed_memory_size;
 
-		mcb = (mem_control_block *)managed_memory_start;
-		mcb->is_available = 1;
-		mcb->prior_blocksize = 0;
-		mcb->current_blocksize = managed_memory_size - sizeof(mem_control_block);
-		has_initialized = 1;
-	}
+        mcb = (mem_control_block *)managed_memory_start;
+        mcb->is_available = 1;
+        mcb->prior_blocksize = 0;
+        mcb->current_blocksize = managed_memory_size - sizeof(mem_control_block);
+        has_initialized = 1;
+    }
 
-	void *malloc(unsigned int numbytes)
-	{
-		intptr_t current_location, otherbck_loaction;
-		mem_control_block *current_location_mcb = NULL, *otherbck_loaction_mcb = NULL;
-		void *memory_location = NULL;
-		unsigned int process_blocksize;
+    void *malloc(unsigned int numbytes)
+    {
+        intptr_t current_location, otherbck_loaction;
+        mem_control_block *current_location_mcb = NULL, *otherbck_loaction_mcb = NULL;
+        void *memory_location = NULL;
+        unsigned int process_blocksize;
 
-		if (!has_initialized)
-			malloc_init();
+        if (!has_initialized)
+            malloc_init();
 
-		current_location = managed_memory_start;
-		while (current_location != managed_memory_end)
-		{
-			current_location_mcb = (mem_control_block *)current_location;
-			if (current_location_mcb->is_available)
-			{
-				if (current_location_mcb->current_blocksize == numbytes)
-				{
-					current_location_mcb->is_available = 0;
-					memory_location = (void *)(current_location + sizeof(mem_control_block));
-					break;
-				}
-				else if (current_location_mcb->current_blocksize >= numbytes + sizeof(mem_control_block))
-				{
-					current_location_mcb->is_available = 0;
-					process_blocksize = current_location_mcb->current_blocksize;
-					current_location_mcb->current_blocksize = numbytes;
+        current_location = managed_memory_start;
+        while (current_location != managed_memory_end)
+        {
+            current_location_mcb = (mem_control_block *)current_location;
+            if (current_location_mcb->is_available)
+            {
+                if (current_location_mcb->current_blocksize == numbytes)
+                {
+                    current_location_mcb->is_available = 0;
+                    memory_location = (void *)(current_location + sizeof(mem_control_block));
+                    break;
+                }
+                else if (current_location_mcb->current_blocksize >= numbytes + sizeof(mem_control_block))
+                {
+                    current_location_mcb->is_available = 0;
+                    process_blocksize = current_location_mcb->current_blocksize;
+                    current_location_mcb->current_blocksize = numbytes;
 
-					otherbck_loaction_mcb = (mem_control_block *)(current_location + numbytes + sizeof(mem_control_block));
-					otherbck_loaction_mcb->is_available = 1;
-					otherbck_loaction_mcb->prior_blocksize = numbytes;
-					otherbck_loaction_mcb->current_blocksize = process_blocksize - numbytes - sizeof(mem_control_block);
-					otherbck_loaction = current_location + numbytes + sizeof(mem_control_block);
+                    otherbck_loaction_mcb = (mem_control_block *)(current_location + numbytes + sizeof(mem_control_block));
+                    otherbck_loaction_mcb->is_available = 1;
+                    otherbck_loaction_mcb->prior_blocksize = numbytes;
+                    otherbck_loaction_mcb->current_blocksize = process_blocksize - numbytes - sizeof(mem_control_block);
+                    otherbck_loaction = current_location + numbytes + sizeof(mem_control_block);
 
-					if (otherbck_loaction != managed_memory_end)
-					{
-						otherbck_loaction_mcb = (mem_control_block *)otherbck_loaction;
-						otherbck_loaction_mcb->prior_blocksize = process_blocksize - numbytes - sizeof(mem_control_block);
-					}
-					memory_location = (void *)current_location + sizeof(mem_control_block);
-					break;
-				}
-			}
-			current_location += current_location_mcb->current_blocksize + sizeof(mem_control_block);
-		}
-		return memory_location;
-	}
+                    if (otherbck_loaction != managed_memory_end)
+                    {
+                        otherbck_loaction_mcb = (mem_control_block *)otherbck_loaction;
+                        otherbck_loaction_mcb->prior_blocksize = process_blocksize - numbytes - sizeof(mem_control_block);
+                    }
+                    memory_location = (void *)current_location + sizeof(mem_control_block);
+                    break;
+                }
+            }
+            current_location += current_location_mcb->current_blocksize + sizeof(mem_control_block);
+        }
+        return memory_location;
+    }
 
-	void free(void *firstbyte)
-	{
-		intptr_t current_location, otherbck_loaction;
-		mem_control_block *current_mcb = NULL, *next_mcb = NULL, *prior_mcb = NULL, *other_mcb = NULL;
-		current_location = (intptr_t)firstbyte - sizeof(mem_control_block);
-		current_mcb = (mem_control_block *)current_location;
-		current_mcb->is_available = 1;
-		otherbck_loaction = current_location + sizeof(mem_control_block) + current_mcb->current_blocksize;
+    void free(void *firstbyte)
+    {
+        intptr_t current_location, otherbck_loaction;
+        mem_control_block *current_mcb = NULL, *next_mcb = NULL, *prior_mcb = NULL, *other_mcb = NULL;
+        current_location = (intptr_t)firstbyte - sizeof(mem_control_block);
+        current_mcb = (mem_control_block *)current_location;
+        current_mcb->is_available = 1;
+        otherbck_loaction = current_location + sizeof(mem_control_block) + current_mcb->current_blocksize;
 
-		if (otherbck_loaction != managed_memory_end) //这里可以改进
-		{
-			next_mcb = (mem_control_block *)otherbck_loaction;
-			if (next_mcb->is_available)
-			{
-				current_mcb->current_blocksize += (sizeof(mem_control_block) + next_mcb->current_blocksize);
+        if (otherbck_loaction != managed_memory_end) //这里可以改进
+        {
+            next_mcb = (mem_control_block *)otherbck_loaction;
+            if (next_mcb->is_available)
+            {
+                current_mcb->current_blocksize += (sizeof(mem_control_block) + next_mcb->current_blocksize);
 
-				otherbck_loaction = current_location + current_mcb->current_blocksize + sizeof(mem_control_block);
-				if (otherbck_loaction != managed_memory_end)
-				{
-					other_mcb = (mem_control_block *)otherbck_loaction;
-					other_mcb->prior_blocksize = current_mcb->current_blocksize;
-				}
-			}
-		}
+                otherbck_loaction = current_location + current_mcb->current_blocksize + sizeof(mem_control_block);
+                if (otherbck_loaction != managed_memory_end)
+                {
+                    other_mcb = (mem_control_block *)otherbck_loaction;
+                    other_mcb->prior_blocksize = current_mcb->current_blocksize;
+                }
+            }
+        }
 
-		if (current_location != managed_memory_start)
-		{
-			prior_mcb = (mem_control_block *)(current_location - sizeof(mem_control_block) - current_mcb->prior_blocksize);
-			if (prior_mcb->is_available)
-			{
-				prior_mcb->current_blocksize += (sizeof(mem_control_block) + current_mcb->current_blocksize);
+        if (current_location != managed_memory_start)
+        {
+            prior_mcb = (mem_control_block *)(current_location - sizeof(mem_control_block) - current_mcb->prior_blocksize);
+            if (prior_mcb->is_available)
+            {
+                prior_mcb->current_blocksize += (sizeof(mem_control_block) + current_mcb->current_blocksize);
 
-				otherbck_loaction = current_location + sizeof(mem_control_block) + current_mcb->current_blocksize;
+                otherbck_loaction = current_location + sizeof(mem_control_block) + current_mcb->current_blocksize;
 
-				if (otherbck_loaction != managed_memory_end)
-				{
-					other_mcb = (mem_control_block *)otherbck_loaction;
-					other_mcb->prior_blocksize = prior_mcb->current_blocksize;
-				}
-			}
-		}
-	}
+                if (otherbck_loaction != managed_memory_end)
+                {
+                    other_mcb = (mem_control_block *)otherbck_loaction;
+                    other_mcb->prior_blocksize = prior_mcb->current_blocksize;
+                }
+            }
+        }
+    }
 
-	int main()
-	{
-		cout << "sizeof unsigned int " << sizeof(unsigned int) << endl;
-		cout << "sizeof long " << sizeof(long) << endl;
-		return 0;
-	}
+    int main()
+    {
+        cout << "sizeof unsigned int " << sizeof(unsigned int) << endl;
+        cout << "sizeof long " << sizeof(long) << endl;
+        return 0;
+    }
 } // namespace test6
 
 int main()
 {
-	test6::main();
-	return 0;
+    test6::main();
+    return 0;
 }
