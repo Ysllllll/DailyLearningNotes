@@ -22,3 +22,6 @@
 简评：比较细致的归纳，从参数传递、内部实现、返回类型等角度区分开
 [显式调用构造函数和析构函数](https://www.cnblogs.com/fangyukuan/archive/2010/08/28/1811119.html)
 简评：用 placement new 创建的对象时，会自动调用构造函数但是不分配内存，同时在销毁对象时要显示调用析构函数，而不能使用 delete，因为内存管理权不在 placement new 身上
+[C++中的 new、operator new 与 placement new](https://www.cnblogs.com/luxiaoxun/archive/2012/08/10/2631812.html)
+[C++ 网易面试题“让 new 操作符不分配内存，只调用构造函数”](https://www.jianshu.com/p/b52a5df69c88)
+简评：中规中矩的描述
