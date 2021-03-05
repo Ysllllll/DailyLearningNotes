@@ -99,30 +99,30 @@ void requestData::addTimer(mytimer *mtimer)
         timer = mtimer;
 }
 
-int requestData::getFd() { return fd; }
-void requestData::setFd(int _fd) { fd = _fd; }
-
 void requestData::reset()
 {
-    againTimes = 0;
-    content.clear();
-    file_name.clear();
-    path.clear();
-    now_read_pos = 0;
-    state = STATE_PARSE_URI;
-    h_state = h_start;
-    headers.clear();
-    keep_alive = false;
+	againTimes = 0;
+	content.clear();
+	file_name.clear();
+	path.clear();
+	now_read_pos = 0;
+	state = STATE_PARSE_URI;
+	h_state = h_start;
+	headers.clear();
+	keep_alive = false;
 }
 
 void requestData::seperateTimer()
 {
-    if (timer)
-    {
-        timer->clearReq();
-        timer = NULL;
-    }
+	if (timer)
+	{
+		timer->clearReq();
+		timer = NULL;
+	}
 }
+int requestData::getFd() { return fd; }
+void requestData::setFd(int _fd) { fd = _fd; }
+
 
 void requestData::handleRequest()
 {

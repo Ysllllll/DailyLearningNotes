@@ -42,8 +42,10 @@ threadpool_t *threadpool_create(int thread_count, int queue_size, int flags)
 		for (i = 0; i < thread_count; i++)
 		{
 			//创建线程就是创建一个执行流，即一个函数调用，只是这个函数在执行时可以不执行完就去执行其它函数
+			//注意threadpool_thread这个函数的返回值不会在这里被接收，这里只是判断这个线程有没有创建成功，而不是判断这个线程的返回值怎么样
 			if (pthread_create(&(pool->threads[i]), NULL, threadpool_thread, (void *)pool) != 0)
 			{
+				//没有创建成功就销毁
 				threadpool_destroy(pool, 0);
 				return NULL;
 			}
@@ -54,6 +56,7 @@ threadpool_t *threadpool_create(int thread_count, int queue_size, int flags)
 		return pool;
 	} while (false);
 
+	// 下面的执行流只有在 pool 创建成功，线程创建前出现了问题，执行pool已分配资源的回收。
 	if (pool != NULL)
 	{
 		threadpool_free(pool);
@@ -136,6 +139,7 @@ int threadpool_destroy(threadpool_t *pool, int flags)
 			break;
 		}
 
+		// 可以看出一个线程创建失败就关闭所有线程，当然如果有线程还有工作则先要等到执行完之后再关闭
 		pool->shutdown = (flags & THREADPOOL_GRACEFUL) ? graceful_shutdown : immediate_shutdown;
 
 		/* Wake up all worker threads */
@@ -193,7 +197,7 @@ static void *threadpool_thread(void *threadpool)
 	threadpool_t *pool = (threadpool_t *)threadpool;
 	threadpool_task_t task;
 
-	for (;;)
+	for (;;) // 无限循环，当没有任务的时候退出，此时也表明这个线程可以退休了
 	{
 		/* Lock must be taken to wait on conditional variable */
 		pthread_mutex_lock(&(pool->lock));
@@ -213,6 +217,7 @@ static void *threadpool_thread(void *threadpool)
 		}
 
 		/* Grab our task */
+		// 注意 线程（thread） 与 任务（task） 没有任何对应关系
 		task.function = pool->queue[pool->head].function;
 		task.argument = pool->queue[pool->head].argument;
 		pool->head = (pool->head + 1) % pool->queue_size;
@@ -225,6 +230,7 @@ static void *threadpool_thread(void *threadpool)
 		(*(task.function))(task.argument);
 	}
 
+	//正常情况下它不会退出
 	--pool->started;
 
 	pthread_mutex_unlock(&(pool->lock));
