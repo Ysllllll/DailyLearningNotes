@@ -16,18 +16,18 @@ ssize_t readn(int fd, void *buff, size_t n)
 	{
 		if ((nread = read(fd, ptr, nleft)) < 0)
 		{
-			if (errno == EINTR)
+			if (errno == EINTR) //表示中断
 				nread = 0;
-			else if (errno == EAGAIN)
+			else if (errno == EAGAIN) //表示未读完
 			{
 				return readSum;
 			}
-			else
+			else //否则，出错
 			{
 				return -1;
 			}
 		}
-		else if (nread == 0)
+		else if (nread == 0) //表示读取结束
 			break;
 		readSum += nread;
 		nleft -= nread;
@@ -48,12 +48,12 @@ ssize_t writen(int fd, void *buff, size_t n)
 		{
 			if (nwritten < 0)
 			{
-				if (errno == EINTR || errno == EAGAIN)
+				if (errno == EINTR || errno == EAGAIN) //写的过程中出现中断或还不能写，重试
 				{
 					nwritten = 0;
 					continue;
 				}
-				else
+				else //否则，出错
 					return -1;
 			}
 		}

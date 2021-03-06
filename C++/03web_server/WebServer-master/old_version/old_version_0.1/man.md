@@ -40,3 +40,8 @@
                 └──────────┘
 */
 ```
+
+[Linux 中的 EAGAIN 含义](https://www.cnblogs.com/big-xuyue/p/3905597.html)
+[关于 errno ==EINTR 的小结](https://www.cnblogs.com/sunzl1987/archive/2012/06/26/2563220.html)
+[read()和 write()](https://www.cnblogs.com/lnlin/p/9492144.html)
+[linux 信号 signal 和 sigaction 理解](https://blog.csdn.net/beginning1126/article/details/8680757)
