@@ -322,7 +322,6 @@ int requestData::parse_URI()
 					file_name = file_name.substr(0, __pos);
 				}
 			}
-
 			else
 				file_name = "index.html";
 		}

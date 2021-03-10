@@ -13,10 +13,10 @@ const int THREADPOOL_GRACEFUL = 1;
 const int MAX_THREADS = 1024;
 const int MAX_QUEUE = 65535;
 
-typedef enum 
+typedef enum
 {
-    immediate_shutdown = 1,
-    graceful_shutdown  = 2
+	immediate_shutdown = 1,
+	graceful_shutdown = 2
 } threadpool_shutdown_t;
 
 /**
@@ -27,9 +27,10 @@ typedef enum
  *  @var argument Argument to be passed to the function.
  */
 
-typedef struct {
-    void (*function)(void *);
-    void *argument;
+typedef struct
+{
+	void (*function)(void *);
+	void *argument;
 } threadpool_task_t;
 
 /**
@@ -49,17 +50,17 @@ typedef struct {
  */
 struct threadpool_t
 {
-    pthread_mutex_t lock;
-    pthread_cond_t notify;
-    pthread_t *threads;
-    threadpool_task_t *queue;
-    int thread_count;
-    int queue_size;
-    int head;
-    int tail;
-    int count;
-    int shutdown;
-    int started;
+	pthread_mutex_t lock;
+	pthread_cond_t notify;
+	pthread_t *threads;
+	threadpool_task_t *queue;
+	int thread_count;
+	int queue_size;
+	int head;
+	int tail;
+	int count;
+	int shutdown;
+	int started;
 };
 
 threadpool_t *threadpool_create(int thread_count, int queue_size, int flags);
