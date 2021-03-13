@@ -1,6 +1,6 @@
 #include "Timer.h"
 
-std::priority_queue<TimerNode *, std::deque<TimerNode *>, TimerCmp> m_timerNodeQueue;
+std::priority_queue<TimerNode *, std::deque<TimerNode *>, TimerCmp> TimerManage::m_timerNodeQueue; //小根堆
 
 TimerNode::TimerNode(TimerNodeInfo info, size_t timeOut) : m_info(info), m_delete(false)
 {
@@ -65,15 +65,19 @@ void TimerNode::clearInfo()
 	this->setDelete();
 };
 
-void TimerManage::adderTimer(TimerNode *timer)
+TimerNode *TimerManage::adderTimer(TimerNode *timer)
 {
 	m_timerNodeQueue.push(timer);
+	std::cout << "add timer success" << std::endl;
+	return timer;
 }
 
-void TimerManage::adderTimer(TimerNode::TimerNodeInfo info, size_t timeOut)
+TimerNode *TimerManage::adderTimer(TimerNode::TimerNodeInfo info, size_t timeOut)
 {
 	TimerNode *timer = new TimerNode(info, timeOut);
 	m_timerNodeQueue.push(timer);
+	std::cout << "add timer success" << std::endl;
+	return timer;
 }
 
 void TimerManage::handleExpiredEvent()
