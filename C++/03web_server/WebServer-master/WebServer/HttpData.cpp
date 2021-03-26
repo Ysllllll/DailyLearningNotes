@@ -867,7 +867,7 @@ URIState HttpData::parseURI()
 	string &str = inBuffer_;
 	string cop = str;
 	// 读到完整的请求行再开始解析请求
-	size_t pos = str.find('\r', nowReadPos_);
+	ssize_t pos = str.find('\r', nowReadPos_);
 	if (pos < 0)
 	{
 		return PARSE_URI_AGAIN;
@@ -913,7 +913,7 @@ URIState HttpData::parseURI()
 	}
 	else
 	{
-		size_t _pos = request_line.find(' ', pos);
+		ssize_t _pos = request_line.find(' ', pos);
 		if (_pos < 0)
 			return PARSE_URI_ERROR;
 		else
@@ -921,7 +921,7 @@ URIState HttpData::parseURI()
 			if (_pos - pos > 1)
 			{
 				fileName_ = request_line.substr(pos + 1, _pos - pos - 1);
-				size_t __pos = fileName_.find('?');
+				ssize_t __pos = fileName_.find('?');
 				if (__pos >= 0)
 				{
 					fileName_ = fileName_.substr(0, __pos);

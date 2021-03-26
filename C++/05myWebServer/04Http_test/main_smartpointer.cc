@@ -108,7 +108,6 @@ namespace shao_smart_point
 			this->pref = data;
 			if (this->pref != nullptr)
 			{
-
 				this->smartCount = new smart_cout(1);
 			}
 			else
