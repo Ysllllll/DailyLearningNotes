@@ -1,12 +1,14 @@
 ## 基于对象编程
 
 - 琐碎前述
+
   - c++文件布局：头文件`(.h)` + 实现文件`(.cc)`
   - 头文件布局：前置声明、类声明、类定义
   - 核心内容是：**类成员函数设计**
   - 可参考：《Effective C++》、标准库实现
 
-- class without pointer member（complex实现）
+- class without pointer member（complex 实现）
+
   - 构造函数
     - 实现为 `public` 成员
       - 可重载多个构造函数：`new classtype[n]` 创建一个对象数组，要求 `classtype` 必须有默认构造函数，此时无法给定每个对象初值。`const` 也是重载关键字，`static`不是
@@ -43,7 +45,8 @@
       - 函数名、参数列表、函数后缀、`const`是重载标志
       - `static`，引用参数、返回类型不是重载标志
 
-- class with pointer member（String实现）
+- class with pointer member（String 实现）
+
   - `big three`
     - 拷贝构造函数：自我验证，深拷贝
     - 拷贝赋值函数：自我验证，深拷贝
@@ -51,6 +54,7 @@
   - 小记：注意 `this` 指代的是什么，拷贝赋值和拷贝构造函数里面的自我验证 `if(this == &s) return`
 
 - `object` 的生命周期
+
   - **栈对象**：离开作用域时 **自动** 调用析构函数
   - **`static local` 对象**：整个程序结束时 **自动** 调用析构函数
   - **`global` 对象**：离开作用域时（是整个程序） **自动** 调用析构函数
@@ -62,6 +66,7 @@
   - 如何禁止产生堆对象，而只能产生栈对象：将 `operator new` 和 `operator delete` 私有化，用户将无法使用 `new`
 
 - `new` 与 `delete`
+
   - `new` 分解
 
     ```C++
@@ -71,7 +76,7 @@
     pc = static_cast<complex*>(mem);//转型
     pc->complex::complex(1, 2);//构造函数
     ```
-  
+
   - `delete` 分解
 
     ```C++
@@ -87,6 +92,7 @@
   - `array new` 和 `array delete`
     - 若类含有指针数据成员，同时没有搭配使用，会造成内存泄露。这里的内存泄露在**第二级的 `new`**（第一级 `new` 为用户调用：`string *p = new string[3]`，第二级 `new` 为构造函数内部调用：`char *m_str = new char[strlen(str)+1]`;）
   - 重载 `::operator new/delete，::operator new[]/delete[]`
+
     - 影响范围：全局
     - 重载理由：实现内存管理
 
@@ -146,11 +152,11 @@
 
 - pointer-like classes
   - 操作符重载： `*` 和 `->`
-    - `*`：```T& operator*() const { return*px; }```
-    - `->`：```T* operator->() const {return px; }```，注意这里返回的是指针，因为`->`操作符可以一直作用下去
+    - `*`：`T& operator*() const { return*px; }`
+    - `->`：`T* operator->() const {return px; }`，注意这里返回的是指针，因为`->`操作符可以一直作用下去
   - 实例：智能指针、迭代器
 - function-like classes
-  
+
   ```C++{.line-numbers}
   class stringAppend
   {
@@ -170,6 +176,7 @@
   ```
 
 - 模板
+
   - 类模板：需要**显式指定模板参数**，`vector<int> a;`
   - 函数模板：不需要显式指定模板参数，编译器会自动推导，`reverse(a.begin(), a.end());`
   - 成员模板：多用于构造函数。将**构造函数**设计为一个成员模板，在定义一个对象的时候，用于初始化对象的初值的类型将绑定到这个成员模板的模板参数上：`pair<BaseType1, BaseType2> p2(pair<DerivedType1, DerivedType2>())`
@@ -197,20 +204,21 @@
     - 指针
     - 向上转型：即给一个父类的指针形参传递了一个子类的指针实参
     - 调用虚函数
-  - 可能出现的问题：当derived class对象经由一个base class指针被删除，而该base class带着一个non-virtual析构函数，其结果未有定义
+  - 可能出现的问题：当 derived class 对象经由一个 base class 指针被删除，而该 base class 带着一个 non-virtual 析构函数，其结果未有定义
 
 ## 琐碎
 
 - 数量不定的模板参数
-  
+
   ```C++
   template<typename T, typename... Type>
   void print(const T& firstArg, const Type&... args);
   ```
 
 - auto
+
   - 编译器自动推导表达式类型
-  
+
     ```C++
     vector<int> vec;
     auto ite1 = find(vec.begin(), vec.end(), target);//能够自动推导
@@ -234,5 +242,3 @@
   - 用途
     - 不用于常量声明
     - 用于参数类型和返回类型描述
-
-
