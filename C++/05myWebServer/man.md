@@ -1,3 +1,15 @@
+## 相关文档
+
+[select、poll、epoll 总结及 ET、LT 区别](https://www.jianshu.com/p/12652dfac760)
+主要关注三种方式在用户空间和内核空间之间的数据传输。另外需要关注 ET、LT 两种模式的实际含义
+
+[epoll 事件通知机制详解，水平触发和边沿触发的区别](https://www.jianshu.com/p/7835726dc78b)
+man 文档的翻译
+
+[epoll 内核源码分析](https://www.jianshu.com/p/aa486512e989)
+
+## 基础知识
+
 signal（SIGPIPE，SIG_IGN）；
 
 Linux 网络编程第 12 讲 tcp11 种状态中
