@@ -1,37 +1,47 @@
 #include <iostream>
 #include <limits.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <vector>
 #include <queue>
 #include <stack>
 #include <unordered_map>
 #include <algorithm>
-#include <bitset>
 using namespace std;
-
-class Solution
-{
-public:
-	int maxProfit(vector<int> &prices)
-	{
-		if (prices.size() == 0)
-			return 0;
-		vector<int> dp(prices.size(), 0);
-
-		for (int i = 1; i < prices.size(); i++)
-		{
-			dp[i] = max(dp[i - 1], dp[i - 1] + prices[i] - prices[i - 1]);
-		}
-		return dp[prices.size() - 1];
-	}
-};
 
 int main()
 {
-	vector<int> weight = {7, 1, 5, 3, 6, 4};
 
-	cout << Solution().maxProfit(weight) << endl;
+	int bag = 1;
+	vector<int> nums = {1, 2, 3};
 
-	return 0;
+	int sum = 0;
+	for (int e : nums)
+		sum += e;
+	vector<int> dp(sum + 1, 0);
+	dp[0] = 0;
+
+	if (bag > sum)
+		cout << -1 << endl;
+
+	for (int e : nums)
+	{
+		for (int i = nums.size(); i >= e; i--)
+		{
+			dp[i] = dp[i - e] + 1;
+		}
+		for (int c : dp)
+			cout << c << " ";
+		cout << endl;
+	}
+
+	int res = INT_MAX;
+	for (int i = bag; i <= sum; i += bag)
+		res = min(res, dp[i]);
+	if (res == INT_MAX)
+		cout << -1 << endl;
+	else
+		cout << res << endl;
+	return -1;
 }
