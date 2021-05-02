@@ -585,9 +585,28 @@ namespace test8 //测试时间复杂度
 		}
 	}
 } // namespace test8
+
+namespace test9 // 测试static成员函数是否受public和private的限定
+{
+	class Solution
+	{
+	public:
+		static int a;
+
+	private:
+		static int b;
+	};
+	int Solution::a = 10;
+	int Solution::b = 11;
+	int main()
+	{
+		cout << Solution::a << endl;
+		//cout << Solution::b<<endl; // error static成员函数受private限定
+	}
+}
 int main()
 {
 
-	test8::main();
+	test9::main();
 	return 0;
 }

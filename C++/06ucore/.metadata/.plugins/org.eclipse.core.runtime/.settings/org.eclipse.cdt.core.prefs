@@ -1,0 +1,4 @@
+config/lab2/cdt.launchMode=run
+config/lab2/cdt.toolChain.id=gcc-x86_64-C\:/Program Files (x86)/Academic_myself/mingw64/bin/gcc.exe
+config/lab2/cdt.toolChain.type=org.eclipse.cdt.build.gcc
+eclipse.preferences.version=1

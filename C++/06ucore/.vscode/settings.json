@@ -1,0 +1,10 @@
+{
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "*.tex": "latex",
+        "memory": "c",
+        "xutility": "c",
+        "cstdlib": "c"
+    },
+    "C_Cpp.dimInactiveRegions": true
+}

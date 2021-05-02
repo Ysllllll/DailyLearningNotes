@@ -1,0 +1,5 @@
+file bin/kernel
+add-symbol-file obj/__user_exit.out 0x00800020
+target remote :1234
+break kern_init
+break _start

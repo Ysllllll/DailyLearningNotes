@@ -8,40 +8,53 @@
 #include <stack>
 #include <unordered_map>
 #include <algorithm>
+#include <sstream>
 using namespace std;
 
+struct TreeNode
+{
+	int val;
+	TreeNode *left;
+	TreeNode *right;
+	TreeNode() : val(0), left(nullptr), right(nullptr) {}
+	TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+	TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+class Solution
+{
+public:
+	vector<int> mostCompetitive(vector<int> &nums, int k)
+	{
+		vector<int> res;
+		k = nums.size() - k;
+
+		for (int i = 0; i < nums.size(); i++)
+		{
+			while ((res.size() != 0) && (res.back() > nums[i]) && (k != 0))
+			{
+				res.pop_back();
+				k--;
+			}
+			res.push_back(nums[i]);
+		}
+
+		while (k != 0)
+			res.pop_back();
+
+		return res;
+	}
+};
 int main()
 {
+	// TreeNode *root = new TreeNode(4);
+	// root->left = new TreeNode(3);
+	// root->left->left = new TreeNode(1);
+	// root->left->right = new TreeNode(2);
+	// root->right = nullptr;
+	// Solution().maxSumBST(root);
 
-	int bag = 1;
-	vector<int> nums = {1, 2, 3};
+	vector<int> res{2, 4, 3, 3, 5, 4, 9, 6};
+	Solution().mostCompetitive(res, 4);
 
-	int sum = 0;
-	for (int e : nums)
-		sum += e;
-	vector<int> dp(sum + 1, 0);
-	dp[0] = 0;
-
-	if (bag > sum)
-		cout << -1 << endl;
-
-	for (int e : nums)
-	{
-		for (int i = nums.size(); i >= e; i--)
-		{
-			dp[i] = dp[i - e] + 1;
-		}
-		for (int c : dp)
-			cout << c << " ";
-		cout << endl;
-	}
-
-	int res = INT_MAX;
-	for (int i = bag; i <= sum; i += bag)
-		res = min(res, dp[i]);
-	if (res == INT_MAX)
-		cout << -1 << endl;
-	else
-		cout << res << endl;
-	return -1;
+	return 0;
 }

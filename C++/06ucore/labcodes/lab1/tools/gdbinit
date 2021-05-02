@@ -1,0 +1,5 @@
+file bin/ucore.img
+target remote :1234
+break bootmain
+alias ly = layout
+alias ir = info registers
