@@ -135,3 +135,118 @@ public:
 		return;
 	}
 };
+
+// 创建一个大顶堆
+class MaxHeap
+{
+private:
+	vector<int> data;
+	int _capacity;
+	int _size;
+
+public:
+	MaxHeap(vector<int> &vec)
+	{
+		_capacity = vec.size();
+		data = vector<int>(_capacity, 0);
+		_size = 0;
+
+		for (int i = 0; i < _capacity; i++)
+		{
+			offer(vec[i]);
+		}
+	}
+	MaxHeap(vector<int> &vec, int len)
+	{
+		_capacity = vec.size();
+		data = vector<int>(_capacity, 0);
+		_size = vec.size();
+
+		for (int i = 0; i < _capacity; i++)
+		{
+			data[i] = vec[i];
+		}
+
+		for (int i = (_capacity - 1) / 2; i >= 0; i--)
+		{
+			shiftDown(i);
+		}
+	}
+	int size()
+	{
+		return _size;
+	}
+	int capacity()
+	{
+		return _capacity;
+	}
+	bool isEmpty()
+	{
+		return _size == 0;
+	}
+	int peek()
+	{
+		if (_size == 0)
+			return INT_MIN;
+		else
+			return data[0];
+	}
+	void replace(int x)
+	{
+		if (_size == 0 || _capacity == 0)
+		{
+			return;
+		}
+		data[0] = x;
+		shiftDown(0);
+	}
+
+	void offer(int x)
+	{
+		if (_size == _capacity)
+			return;
+		data[_size] = x;
+		_size++;
+		shiftUp(_size);
+	}
+	int poll()
+	{
+		int res = data[0];
+		data[0] = data[_size - 1];
+		_size--;
+		shiftDown(0);
+		return res;
+	}
+	void shiftUp(int low)
+	{
+		int temp = data[low];
+
+		for (int i = (low - 1) / 2; i >= 0; i = (i - 1) / 2)
+		{
+			if (data[i] >= temp)
+				break;
+			data[low] = data[i];
+			low = i;
+			if (i == 0)
+				break;
+		}
+
+		data[low] = temp;
+	}
+	void shiftDown(int high)
+	{
+		int temp = data[high];
+
+		for (int i = high * 2 + 1; i < _size; i = i * 2 + 1)
+		{
+			if (i + 1 < _size && data[i] < data[i + 1])
+				i++;
+			if (data[i] <= temp)
+				break;
+
+			data[high] = data[i];
+			high = i;
+		}
+		data[high] = temp;
+	}
+};
