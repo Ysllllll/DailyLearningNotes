@@ -1,106 +1,64 @@
 #include "test.h"
 
-class MedianFinder
-{
-private:
-	vector<int> maxHeap;
-	vector<int> minHeap;
-	static bool Greater(int a, int b)
-	{
-		return a >= b;
-	}
-	static bool Less(int a, int b)
-	{
-		return a <= b;
-	}
-	void shiftDown(vector<int> &vec, int left, int right, bool (*op)(int, int))
-	{
-		int temp = vec[left];
-
-		for (int i = left * 2 + 1; i <= right; i = i * 2 + 1)
-		{
-			if (i + 1 <= right && op(vec[i + 1], vec[i]))
-				i++;
-			if (op(temp, vec[i]))
-				break;
-			vec[left] = vec[i];
-			left = i;
-		}
-		vec[left] = temp;
-	}
-	void shiftUp(vector<int> &vec, int left, int right, bool (*op)(int, int))
-	{
-		int temp = vec[right];
-
-		for (int i = (right - 1) / 2; i >= left; i = (i - 1) / 2)
-		{
-			if (op(vec[i], temp))
-				break;
-			vec[right] = vec[i];
-			right = i;
-			if (right == left)
-				break;
-		}
-		vec[right] = temp;
-	}
-
-public:
-	/** initialize your data structure here. */
-	MedianFinder()
-	{
-	}
-
-	void addNum(int num)
-	{
-
-		maxHeap.push_back(num);
-		shiftUp(maxHeap, 0, maxHeap.size() - 1, Greater);
-
-		int maxSize = maxHeap.size();
-		int minSize = minHeap.size();
-		if (maxSize - minSize >= 2)
-		{
-			minHeap.push_back(maxHeap[0]);
-			shiftUp(minHeap, 0, minSize, Less);
-			maxHeap[0] = maxHeap[maxSize - 1];
-			maxHeap.pop_back();
-			shiftDown(maxHeap, 0, maxSize - 2, Greater);
-		}
-
-		if (minHeap.size() > 0 && minHeap[0] < maxHeap[0])
-		{
-			swap(minHeap[0], maxHeap[0]);
-			shiftDown(minHeap, 0, minHeap.size() - 1, Less);
-			shiftDown(maxHeap, 0, maxHeap.size() - 1, Greater);
-		}
-	}
-
-	double findMedian()
-	{
-		if (maxHeap.size() == minHeap.size())
-			return (double(maxHeap[0] + minHeap[0])) / 2;
-		else
-			return maxHeap[0];
-	}
-};
+#include <iostream>
+#include <vector>
+#include <bits/stdc++.h>
+using namespace std;
 
 int main()
 {
+	int bags = 0;
 
-	MedianFinder *obj = new MedianFinder();
-	obj->addNum(1);
-	obj->addNum(2);
-	obj->addNum(3);
-	obj->addNum(4);
-	obj->addNum(5);
-	obj->addNum(6);
-	obj->addNum(7);
-	cout << obj->findMedian() << endl;
-	obj->addNum(8);
-	cout << obj->findMedian() << endl;
-	obj->addNum(9);
-	cout << obj->findMedian() << endl;
-	obj->addNum(10);
+	cin >> bags;
+
+	vector<int> arr;
+	int n;
+
+	while (cin >> n)
+		arr.push_back(n);
+	int sz = arr.size();
+	vector<int> weights(arr.begin(), arr.begin() + sz / 2);
+	vector<int> values(arr.begin() + sz / 2, arr.end());
+
+	vector<int> dp(bags + 1, 0);
+	for (int i = bags; i >= weights[0]; i++)
+		dp[i] = dp[i - weights[0]] + values[0];
+
+	for (int i = 1; i < weights.size(); i++)
+		for (int j = bags; j >= weights[i]; j--)
+			dp[j] = max(dp[j], dp[j - weights[i]] + values[i]);
+
+	cout << dp[bags] << endl;
+
+	return 0;
+}
+
+int main2()
+{
+	int N, x;
+	cin >> N;
+	vector<int> f(N + 1, 0);
+	vector<int> arr, w, v;
+	while (cin >> x)
+	{
+		arr.push_back(x);
+	}
+	int n = arr.size() / 2;
+	w.assign(arr.begin(), arr.begin() + n);
+	v.assign(arr.begin() + n, arr.end());
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = N; j >= w[i]; --j)
+		{
+			f[j] = max(f[j], f[j - w[i]] + v[i]);
+		}
+	}
+	cout << f[N] << endl;
+	return 0;
+}
+
+int main3()
+{
 
 	return 0;
 }
