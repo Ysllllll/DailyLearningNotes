@@ -59,7 +59,11 @@
 		"mutex": "cpp",
 		"thread": "cpp",
 		"unordered_set": "cpp",
-		"future": "cpp"
+		"future": "cpp",
+		"types.h": "c",
+		"bitset": "c",
+		"valarray": "c",
+		"shared_mutex": "cpp"
 	},
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
