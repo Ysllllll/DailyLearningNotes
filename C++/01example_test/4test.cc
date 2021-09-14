@@ -366,7 +366,7 @@ namespace test6 //内存池测试
 						otherbck_loaction_mcb = (mem_control_block *)otherbck_loaction;
 						otherbck_loaction_mcb->prior_blocksize = process_blocksize - numbytes - sizeof(mem_control_block);
 					}
-					memory_location = (void *)current_location + sizeof(mem_control_block);
+					memory_location = (void *)(current_location + sizeof(mem_control_block));
 					break;
 				}
 			}
@@ -602,11 +602,152 @@ namespace test9 // 测试static成员函数是否受public和private的限定
 	{
 		cout << Solution::a << endl;
 		//cout << Solution::b<<endl; // error static成员函数受private限定
+		return 0;
+	}
+}
+
+#include <memory>
+#include <string_view>
+namespace test10 // 测试智能指针
+{
+	class myPointer
+	{
+	private:
+		int *m_count;
+		int *m_value;
+
+	public:
+		myPointer(int v) : m_value(new int(v)), m_count(new int(1))
+		{
+			cout << "myPointer" << endl;
+		}
+		myPointer(const myPointer &p)
+		{
+			m_value = p.getValue();
+			m_count = p.getCount();
+			(*m_count)++;
+		}
+		myPointer &operator=(const myPointer &p)
+		{
+			if (&p == this)
+				return *this;
+			(*m_count)--;
+			m_count = p.getCount();
+			(*m_count)++;
+			m_value = p.getValue();
+
+			return *this;
+		}
+		~myPointer()
+		{
+			(*m_count)--;
+			if (*m_count == 0)
+			{
+				delete m_value;
+				delete m_count;
+				cout << "~myPointer, delete myPointer" << endl;
+				return;
+			}
+			else
+				cout << "~myPointer, decrease pointer reference" << endl;
+		}
+		int *getValue() const
+		{
+			return m_value;
+		}
+		int *getCount() const
+		{
+			return m_count;
+		}
+		int &operator*()
+		{
+			return *m_value;
+		}
+	};
+
+	void badThing()
+	{
+		throw(1);
+	}
+
+	class Child;
+	class Parent
+	{
+	public:
+		shared_ptr<Child> child;
+
+		Parent()
+		{
+			cout << "Parent()" << endl;
+		}
+		~Parent()
+		{
+			cout << "~Parent()" << endl;
+		}
+	};
+
+	class Child
+	{
+
+	public:
+		shared_ptr<Parent> parent;
+
+		Child()
+		{
+			cout << "Child()" << endl;
+		}
+		~Child()
+		{
+			cout << "~Child()" << endl;
+		}
+	};
+
+	int main()
+	{
+		try
+		{
+			myPointer t(10);
+			myPointer x(t);
+			cout << "*t = " << *t << endl;
+			cout << "*x = " << *x << endl;
+			cout << "*t.getCount() = " << *t.getCount() << endl;
+			cout << "*x.getCount() = " << *x.getCount() << endl;
+			{
+				myPointer y(x);
+				cout << "*t = " << *t << endl;
+				cout << "*x = " << *x << endl;
+				cout << "*y = " << *y << endl;
+				cout << "*t.getCount() = " << *t.getCount() << endl;
+				cout << "*x.getCount() = " << *x.getCount() << endl;
+				cout << "*y.getCount() = " << *y.getCount() << endl;
+			}
+			cout << "*t.getCount() = " << *t.getCount() << endl;
+			cout << "*x.getCount() = " << *x.getCount() << endl;
+			badThing();
+		}
+		catch (int i)
+		{
+			cerr << "badThing function has happen" << endl;
+		}
+
+		shared_ptr<Parent> parent(make_shared<Parent>());
+		shared_ptr<Child> child(make_shared<Child>());
+		parent->child = child;
+		child->parent = parent;
+
+		cout << parent.use_count() << endl;
+
+		return 0;
 	}
 }
 int main()
 {
 
-	test9::main();
+	test10::main();
+
+	string s("123456789");
+	string p(s);
+	cout << p << endl;
+
 	return 0;
 }

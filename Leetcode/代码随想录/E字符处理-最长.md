@@ -6,147 +6,59 @@
 >
 > - **子数组**
 >
->   - **[5. 最长回文子串](./E字符处理-回文串.md#palindrome_string)**
->   - **[3. 无重复字符的最长子串](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/)** [速览题解](#3)
->     - 简评：注意动态规划的分析，dp[i]是什么含义。
->     - 案例："pwwkew"
->   - **[424. 替换后的最长重复字符](https://leetcode-cn.com/problems/longest-repeating-character-replacement/submissions/)** [速览题解](#424)
+>   - **[5. 最长回文子串](https://leetcode-cn.com/problems/longest-palindromic-substring/)**
+>     - 简评：回文板块
+>   - **[3. 无重复字符的最长子串](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/)**
+>     - 简评：滑动窗口
+>   - **[424. 替换后的最长重复字符](https://leetcode-cn.com/problems/longest-repeating-character-replacement/)**
+>     - 简评：滑动窗口
+>   - **[674. 最长连续递增序列](https://leetcode-cn.com/problems/longest-continuous-increasing-subsequence/)**
+>     - 简评：动态规划、滑动窗口-循环不变量
+>   - **[845. 数组中的最长山脉](https://leetcode-cn.com/problems/longest-mountain-in-array/)**
+>     - 简评：双指针
+>   - **[1438. 绝对差不超过限制的最长连续子数组](https://leetcode-cn.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/)**
+>     - 简评：滑动窗口
+>   - **[53. 最大子序和](https://leetcode-cn.com/problems/maximum-subarray/)**
+>     - 简评：动态规划
+>   - **[152. 乘积最大子数组](https://leetcode-cn.com/problems/maximum-product-subarray/)**
+>     - 简评：动态规划
 >   - ++++++++++++++++++++++++
->   - **[674. 最长连续递增序列](https://leetcode-cn.com/problems/longest-continuous-increasing-subsequence/)** [速览题解](#674)
->   - **[845. 数组中的最长山脉](https://leetcode-cn.com/problems/longest-mountain-in-array/)** [速览题解](#845)
->     - 简评：单串、要求连续
->   - **[1438. 绝对差不超过限制的最长连续子数组](https://leetcode-cn.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/)** [速览题解](#1438)
->   - **53. 最大子序和**
->   - **152. 乘积最大子数组**
->   - ++++++++++++++++++++++++
->   - **[718. 最长重复子数组](https://leetcode-cn.com/problems/maximum-length-of-repeated-subarray/submissions/)** [速览题解](#718)
->     - 简评：双串、要求连续
+>   - **[718. 最长重复子数组](https://leetcode-cn.com/problems/maximum-length-of-repeated-subarray/)**
+>     - 简评：动态规划
 >
 > - **子序列**
 >
->   - **[5. 最长回文子序列](./E字符处理-回文串.md#palindrome_string)**
+>   - **[516. 最长回文子序列](https://leetcode-cn.com/problems/longest-palindromic-subsequence/)**
+>     - 简评：回文串板块
 >   - ++++++++++++++++++++++++
->   - **[300. 最长递增子序列](https://leetcode-cn.com/problems/longest-increasing-subsequence/submissions/)** [速览题解](#300)
->     - 简评：单串、不要求连续
->   - **[1027. 最长等差数列](https://leetcode-cn.com/problems/longest-arithmetic-subsequence/)** [速览题解](#1027)
->   - **[873. 最长的斐波那契子序列的长度](https://leetcode-cn.com/problems/length-of-longest-fibonacci-subsequence/)** [速览题解](#873)
->   - **[594. 最长和谐子序列](https://leetcode-cn.com/problems/longest-harmonious-subsequence/)** [速览题解](#594)
+>   - **[300. 最长递增子序列](https://leetcode-cn.com/problems/longest-increasing-subsequence/)**
+>     - 简评：动态规划
+>   - **[1027. 最长等差数列！！](https://leetcode-cn.com/problems/longest-arithmetic-subsequence/)**
+>   - **[873. 最长的斐波那契子序列的长度！！](https://leetcode-cn.com/problems/length-of-longest-fibonacci-subsequence/)**
+>   - **[594. 最长和谐子序列](https://leetcode-cn.com/problems/longest-harmonious-subsequence/)**
 >     - 简评：是窗口中的元素差值为 1
->   - **No.组合最长山脉**
->   - **No.组合差值小于 limit 的子序列**
 >   - ++++++++++++++++++++++++
->   - **[1143. 最长公共子序列](https://leetcode-cn.com/problems/longest-common-subsequence/submissions/)** [速览题解](#1143)
->     - 简评：双串、不要求连续
+>   - **[1143. 最长公共子序列](https://leetcode-cn.com/problems/longest-common-subsequence/)** [速览题解](#1143)
+>     - 简评：动态规划
 >
 > - **其它**
 >
->   - **[32. 最长有效括号](https://leetcode-cn.com/problems/longest-valid-parentheses/)** [速览题解](#32)
->     - 简评：匹配问题，匹配法则是括号成对
+>   - **[32. 最长有效括号](https://leetcode-cn.com/problems/longest-valid-parentheses/)** [速览题解](#32)<a id="l32"></a>
+>     - 简评：**动态规划**。这道题要读懂题意，说的是**最长的连续的**有效括号，不是说的有效的括号有多少。即注意这种情况：`")()))((()))"` 结果为6，而非8
 >   - **[1392. 最长快乐前缀](https://leetcode-cn.com/problems/longest-happy-prefix/)** [速览题解](#1392)
->     - 简评：匹配问题，匹配法则是前缀后缀相同
+>     - 简评：**KMP算法**，很简单，[KMP 的动态规划解释参考这个链接](https://leetcode-cn.com/problems/longest-happy-prefix/solution/c-dp-5367-zui-chang-kuai-le-qian-zhui-by-yuexiwen/)。另外一方面也可以使用字符串哈希做法
 >   - **[521. 最长特殊序列 Ⅰ](https://leetcode-cn.com/problems/longest-uncommon-subsequence-i/)** [速览题解](#521)
 >     - 简评：这道题考察阅读能力，522 可不做
 >   - **[128. 最长连续序列](https://leetcode-cn.com/problems/longest-consecutive-sequence/)** [速览题解](#128)
->     - 简评：先排序，然后再搜索最长连续递增子串，这样做的复杂度就主要取决于排序算法了。但是需要优化到 O(n)的时间复杂度
+>     - 简评：**哈希法**。这道题算是**无序的最长连续序列**，之前的经典题型是**有序的最长连续序列**。先排序，然后再搜索最长连续递增子串，这样做的复杂度就主要取决于排序算法了。但是需要优化到 O(n)的时间复杂度。可以使用哈希表，然后随机选取哈希表中的一个数，**中心扩散**的寻找周围的数是否在哈希表中。时间复杂度和空间复杂度均为O(N)。
 >   - **[14. 最长公共前缀](https://leetcode-cn.com/problems/longest-common-prefix/)** [速览题解](#14)
->     - 简评：这道题很简单，就是简单的模拟，有多个字符串，看前缀相同的是什么
+>     - 简评：**模拟**。这道题比较简单，可以横向扫描也可以纵向扫描，寻找 `vector<string>` 中所有字符串的公共前缀，注意 `flag`。
 >   - **[1405. 最长快乐字符串](https://leetcode-cn.com/problems/longest-happy-string/)** [速览题解](#1405)
->     - 简评：这里用到了贪心策略
+>     - 简评：**贪心策略**。给定一定数量的字符串，在**满足排放规则**的前提下构成最长的字符串。使用贪心算法，先**在最多的字符里面选取两个**，然后**在次多的字符里选取一个**。
 >   - **[687. 最长同值路径](https://leetcode-cn.com/problems/longest-univalue-path/)** [速览题解](#687)
+>     - 简评：**二叉树的后序遍历**。这道题注意分析思路，递归实现分别计算 `left, right, lm, lmr, rm`。**先计算出 `left` 和 `right`，然后再分别计算三条路径**。其中：`lmr` 只参与判断可以组成的最长长度，不用于返回，只有 `lm` 和 `rm` 用于返回。递归的过程是后序遍历，所以也可以用迭代来实现。
 >   - **[549. 二叉树中最长的连续序列](https://leetcode-cn.com/problems/binary-tree-longest-consecutive-sequence-ii/)** [速览题解](#549)
-
-<a id="3"></a>
-
-### [3. 无重复字符的最长子串](#longest)
-
-```C++{.line-numbers}
-//
-class Solution {
-public:
-    int lengthOfLongestSubstring(string s) {
-        int l = 0, r = 0;
-        int maxlen = 0;
-
-        for( ; r<s.size(); r++)
-        {
-            for(int k = l; k < r; k++)
-            {
-                if(s[r] == s[k])
-                {
-                    l = k + 1;
-                    break;
-                }
-            }
-
-            if(r - l + 1 > maxlen)
-                maxlen = r - l + 1;
-        }
-        return maxlen;
-    }
-};
-
-// 该写法直接跳到重复字符的下一个字符处，节省了循环
-class Solution {
-public:
-    int lengthOfLongestSubstring(string s) {
-        vector<int> m(128, 0);
-        int ans = 0;
-        int i = 0;
-        for (int j = 0; j < s.size(); j++) {
-            i = max(i, m[s[j]]);
-            m[s[j]] = j + 1;
-            ans = max(ans, j - i + 1);
-        }
-        return ans;
-    }
-};
-
-// 动态规划
-class Solution {
-public:
-    int lengthOfLongestSubstring(string s) {
-        if(s.size() == 0) return 0;
-
-        vector<int> dp(s.size(), 0);
-        dp[0] = 1;
-        for(int i = 1; i < s.size(); i++)
-        {
-            int j = i - 1;
-            for(; (j >= 0) && (s[i] != s[j]); j--);
-            dp[i] = min(dp[i - 1] + 1, i - j);
-        }
-        return *max_element(dp.begin(), dp.end());
-    }
-};
-```
-
-<a id="424"></a>
-
-### [424. 替换后的最长重复字符](#longest)
-
-```C++{.line-numbers}
-class Solution {
-public:
-    int characterReplacement(string s, int k) {
-        vector<int> num(26,0);
-        int res = 0;
-        int left = 0, right = 0;
-        while(right < s.size())
-        {
-            num[s[right] - 'A']++;
-            res = max(res, num[s[right] - 'A']);
-
-            if(right - left + 1 - res > k)
-            {
-                num[s[left] - 'A']--;
-                left ++;
-            }
-            right++;
-        }
-        return right - left;
-    }
-};
-```
+>     - 简评：**树上的动态规划**，返回的数组为 `[inc, dec]`
 
 <a id="32"></a>
 
@@ -167,8 +79,11 @@ public:
             {
                 if(s[i - 1] == '(')
                 {
+                    // "()"  "()()"
                     dp[i] = (i >= 2? dp[i - 2]: 0) + 2;
                 }
+                // "(()))))()(()())"
+                //        ^ 之前的不管，求的是连续最长的
                 else if((i - dp[i - 1] > 0) && s[i - 1 - dp[i - 1]] == '(')
                 {
                     dp[i] = dp[i - 1] + 2 + (i - 2 - dp[i - 1] >= 0 ? dp[i - 2 - dp[i - 1]]: 0);
@@ -234,26 +149,27 @@ public:
 class Solution {
 public:
     int longestConsecutive(vector<int>& nums) {
-        unordered_set<int> nums_set;
-        for(int num: nums)
-            nums_set.insert(num);
-
-        int res = 0;
-        for(int i = 0; i < nums.size(); i++)
-        {
-            int temp = 0;
-            if(nums_set.find(nums[i] - 1) == nums_set.end() )
-            {
-                int j = 0;
-                while(nums_set.find(nums[i] + j) != nums_set.end())
-                {
-                    temp++;
-                    j++;
-                }
-            }
-            res = max(res, temp);
+        unordered_set<int> q;
+        for (int i = 0; i < nums.size(); i++) {
+            q.insert(nums[i]);
         }
-        return res;
+        int ans = 0;
+        while (!q.empty()) {
+            int now = *q.begin();
+            q.erase(now);
+            int l = now - 1, r = now + 1;
+            while (q.find(l) != q.end()) {
+                q.erase(l);
+                l--;
+            }
+            while(q.find(r) != q.end()) {
+                q.erase(r);
+                r++;
+            }
+            l = l + 1, r = r - 1;
+            ans = max(ans, r - l + 1);
+        }
+        return ans;
     }
 };
 
@@ -289,6 +205,7 @@ public:
 ### [1392. 最长快乐前缀](#longest)
 
 ```C++{.line-numbers}
+// 使用 KMP 做法
 // dp[i]含义是：以 i 结尾的最长前缀匹配个数
 class Solution {
 public:
@@ -311,8 +228,7 @@ public:
     string longestPrefix(string s) {
         if(s.length() <= 1) return "";
 
-        int n = s.length();
-        int next[n + 1];
+        vector<int> next(s.size() + 1);
         next[0] = -1;
         int k = -1;
         int j = 0;
@@ -327,7 +243,47 @@ public:
                 k = next[k];
             }
         }
-        return s.substr(0,next[n]);
+        return s.substr(0,next[s.size()]);
+    }
+};
+
+// 使用字符哈希的做法
+class Solution {
+public:
+    string longestPrefix(string s) {
+        long long prefix = 0, suffix = 0;
+        long long base = 131, mod = 1000000007, mul = 1;
+        int happy = 0;
+        for(int i = 1; i < s.size(); i++)
+        {
+            prefix = (prefix * base + s[i - 1]) % mod;
+            suffix = (suffix + s[s.size() - i] * mul) % mod;
+            if(prefix == suffix)
+                happy = i;
+            
+            mul = mul *base % mod;
+        }
+        return s.substr(0, happy);
+    }
+
+    string longestPrefix1(string s)
+    {
+        // "123456" -> 123456
+        int base = 10, ret1 = 0;
+        for(int i = 0; i < s.size(); i++)
+        {
+            ret1 = ret1 * base + s[i] - '0';
+        }
+
+        // "123456" -> 123456
+        int mul = 1, ret2 = 0;
+        for(int i = s.size() - 1; i >= 0; i--)
+        {
+            ret2 = ret2 + (s[i] - '0') * mul;
+            mul = mul * base;
+        }
+
+        return "";
     }
 };
 ```
@@ -340,23 +296,20 @@ public:
 class Solution {
 public:
     string longestCommonPrefix(vector<string>& strs) {
-        if(strs.size() == 0) return "";
 
         int i = 0;
-        bool flag = true;
-        for(; flag == true; i++)
+        int flag = true;
+        while(flag == true)
         {
-            if(i > strs[0].size()) flag = false;
-
-            for(int j = 1; j < strs.size() && flag == true; j++)
+            // 注意这里 && flag
+            for(int j = 0; j < strs.size() && flag; j++)
             {
                 if(i > strs[j].size()) flag = false;
-                if(strs[j][i] != strs[j - 1][i]) flag = false;
+                if(j > 0 && strs[j][i] != strs[j - 1][i]) flag = false;
             }
+            i++;
         }
-
         return strs[0].substr(0, i - 1);
-
     }
 };
 ```
@@ -562,26 +515,47 @@ public:
 ```C++{.line-numbers}
 class Solution {
 public:
-    int longestUnivaluePathHelper(TreeNode* root, int &res) {
+    int longestUnivaluePath(TreeNode* root, int &res) {
         if(root == nullptr) return 0;
-        int temp = 0;
 
-        int left = longestUnivaluePathHelper(root->left, res);
-        int right = longestUnivaluePathHelper(root->right, res);
-        if((root->left != nullptr) && (root->left->val == root->val) && (root->right != nullptr) && (root->right->val == root->val))
-            res = max(res, left + right + 2);
+        int left = longestUnivaluePath(root->left, res); // 这里注意函数调用
+        int right = longestUnivaluePath(root->right, res);
 
-        if((root->left != nullptr) && (root->left->val == root->val))
-            temp = left + 1;
-
-        if((root->right != nullptr) && (root->right->val == root->val))
-            temp = max(temp, right + 1);
-        res = max(res, temp);
-        return temp;
+        int lm = 0, rm = 0, lmr = 0;
+        if(root->left != nullptr && root->left->val == root->val && root->right != nullptr && root->right->val == root->val)
+            lmr = left + right + 2;
+        if(root->left != nullptr && root->left->val == root->val)
+            lm = left + 1;
+        if(root->right != nullptr && root->right->val == root->val)
+            rm = right + 1;
+        
+        res = max({res, lmr, lm, rm}); // 这里注意 res 也要参与运算
+        return max({lm, rm});
     }
     int longestUnivaluePath(TreeNode* root) {
         int res = 0;
-        longestUnivaluePathHelper(root, res);
+        longestUnivaluePath(root, res);
+        return res;
+    }
+};
+
+class Solution {
+public:
+    int longestUnivaluePath(TreeNode* root, int &res) {
+        if(root == nullptr) return 0;
+
+        int left = longestUnivaluePath(root->left, res); // 这里注意函数调用
+        int right = longestUnivaluePath(root->right, res);
+        
+        int lm = (root->left != nullptr && root->left->val == root->val)? left + 1: 0;
+        int mr = (root->right != nullptr && root->right->val == root->val)? right + 1: 0;
+        
+        res = max(res, lm + mr);
+        return max({lm, mr});
+    }
+    int longestUnivaluePath(TreeNode* root) {
+        int res = 0;
+        longestUnivaluePath(root, res);
         return res;
     }
 };
@@ -592,25 +566,37 @@ public:
 ### [549. 二叉树中最长的连续序列](#longest)
 
 ```C++{.line-numbers}
-
 class Solution {
 public:
-    /**
-     * @param root: the root of binary tree
-     * @return: the length of the longest consecutive sequence path
-     */
-    int longestConsecutive(TreeNode * root) {
-        // write your code here
-        return lengthcal(root,NULL,0);
+    int longestConsecutive(TreeNode *root) {
+        int res = 0;
+        traversal(root, res);
+        return res;
     }
-
-    int lengthcal(TreeNode * root,TreeNode * parent,int lengthwitgoutroot){
-        if(root==NULL) return 0;
-        int length=(parent!=NULL&&parent->val+1==root->val)?lengthwitgoutroot+1:1;
-        int left=lengthcal(root->left,root,length);
-        int right=lengthcal(root->right,root,length);
-        return max(length,max(left,right));
+    
+    pair<int, int> traversal(TreeNode *root, int &res) {
+        if (root == nullptr) return {0, 0};
+        
+        auto left = traversal(root->left, res);
+        auto right = traversal(root->right, res);
+        
+        int inc = 1, dec = 1;
+        if (root->left != nullptr) {
+            if (root->left->val + 1 == root->val) inc = left.first + 1;
+            if (root->left->val - 1 == root->val) dec = left.second + 1;
+        }
+        if (root->right != nullptr) {
+            // 注意定义的递增和递减的方向与left不一样
+            if (root->val - 1 == root->right->val) inc = max(inc, right.first + 1);
+            if (root->val + 1 == root->right->val) dec = max(dec, right.second + 1);
+        }
+        // left[1, 2, 3] root[4] right[5, 6, 7]
+        //     inc                    dec
+        res = max(res, inc + dec - 1);
+        
+        return {inc, dec};
     }
+};
 ```
 
 <a id="1405"></a>
@@ -642,84 +628,4 @@ public:
     }
 };
 
-```
-
-<a id="1438"></a>
-
-### [1438. 绝对差不超过限制的最长连续子数组](#longest)
-
-```C++{.line-numbers}
-class Solution {
-public:
-    int longestSubarray(vector<int>& nums, int limit) {
-        deque<int> queMax, queMin;
-        int n = nums.size();
-        int left = 0, right = 0;
-        int ret = 0;
-        while (right < n) {
-            while (!queMax.empty() && queMax.back() < nums[right]) {
-                queMax.pop_back();
-            }
-            while (!queMin.empty() && queMin.back() > nums[right]) {
-                queMin.pop_back();
-            }
-            queMax.push_back(nums[right]);
-            queMin.push_back(nums[right]);
-            while (!queMax.empty() && !queMin.empty() && queMax.front() - queMin.front() > limit) {
-                if (nums[left] == queMin.front()) {
-                    queMin.pop_front();
-                }
-                if (nums[left] == queMax.front()) {
-                    queMax.pop_front();
-                }
-                left++;
-            }
-            ret = max(ret, right - left + 1);
-            right++;
-        }
-        return ret;
-    }
-};
-
-class Solution {
-public:
-
-    //解法二：使用双指针构造滑动窗口。使用单调队列计算窗口内任意两元素的绝对差的最大值，若该最大值大于 limit 则将窗口左端右移一位，否则将窗口右端右移一位；满足要求的滑动窗口的最大长度即为所求。
-    int longestSubarray(vector<int>& nums, int limit)
-    {
-        deque<int> maxQueue; //最大值队列。存储可能成为滑动窗最大值的元素值。单调减
-        deque<int> minQueue; //最小值队列。存储可能成为滑动窗最小值的元素值。单调增
-        int n = nums.size();
-        int windowRight = 0;
-        int windowLeft = 0;
-        int maxLength = 0;
-        int currentLength;
-
-        //以 [windowLeft,windowRight] 为滑动窗口
-        while (windowRight < n)
-        {
-            while (!maxQueue.empty() && nums[windowRight] > maxQueue.back())
-                maxQueue.pop_back(); //这些元素值已不可能成为滑动窗口的最大值
-            while (!minQueue.empty() && nums[windowRight] < minQueue.back())
-                minQueue.pop_back(); //这些元素值已不可能成为滑动窗口的最小值
-
-            maxQueue.push_back(nums[windowRight]);
-            minQueue.push_back(nums[windowRight]);
-
-            //找到以 windowRight 为右端点的满足要求的最长子数组
-            while (maxQueue.front()- minQueue.front() > limit) //不断移出子数组左端的元素
-            {
-                if (nums[windowLeft] == maxQueue.front()) //移出的是原窗口的最大值
-                    maxQueue.pop_front();
-                if (nums[windowLeft] == minQueue.front()) //移出的是原窗口的最小值
-                    minQueue.pop_front();
-                windowLeft++;
-            }
-            currentLength = windowRight - windowLeft + 1;
-            maxLength = maxLength > currentLength ? maxLength : currentLength;
-            windowRight++;
-        }
-        return maxLength;
-    }
-};
 ```
